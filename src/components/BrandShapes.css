@@ -1,3 +1,0 @@
-.brand-shapes { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.brand-shapes__item { position: absolute; will-change: transform; }
-.brand-shapes__item svg { overflow: visible; }
