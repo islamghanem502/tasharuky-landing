@@ -1,0 +1,30 @@
+:root {
+  /* Brand — sampled from the Tasharuky logo */
+  --brick: #832e24;
+  --brick-700: #69251d;
+  --brick-500: #a2402f;
+  --brick-300: #cf8576;
+  --brick-100: #f3dcd6;
+
+  --teal: #2f9597;
+  --teal-700: #0c7776;
+  --teal-900: #103d42;
+  --teal-300: #86c6c7;
+  --teal-100: #d9eeee;
+
+  --ink: #1b2234;
+  --ink-800: #232c42;
+  --ink-600: #3b465e;
+  --muted: #667085;
+
+  --cream: #fbf6f1;
+  --cream-2: #f5ece3;
+  --paper: #ffffff;
+
+  --font: 'Cairo Variable', 'Cairo', system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --container: 1240px;
+  --gutter: clamp(20px, 4vw, 48px);
+}
