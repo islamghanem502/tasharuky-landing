@@ -24,14 +24,8 @@
 .nav__actions { display: flex; align-items: center; gap: 10px; }
 .nav__lang { width: 44px; height: 44px; border-radius: 50%; font-weight: 800; font-size: .82rem; letter-spacing: .04em; color: var(--ink); box-shadow: inset 0 0 0 1.5px rgba(27,34,52,.12); transition: background .3s, color .3s; }
 .nav__lang:hover { background: var(--ink); color: #fff; }
-.nav__cta {
-  display: inline-flex; align-items: center; gap: 10px; padding: 5px 20px 5px 5px; height: 46px;
-  border-radius: 999px; background: var(--brick); color: #fff; font-weight: 700; position: relative; overflow: hidden; isolation: isolate;
-}
-.nav__cta::before { content: ''; position: absolute; inset: 0; background: var(--teal-700); z-index: -1; transform: translateY(101%); transition: transform .55s var(--ease-out); }
-.nav__cta:hover::before { transform: none; }
-.nav__cta i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.18); transition: transform .5s var(--ease-out); }
-.nav__cta:hover i { transform: rotate(-45deg); }
+.nav__cta { display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: var(--brick); color: #fff; font-weight: 700; font-size: .95rem; white-space: nowrap; transition: background-color .25s; }
+.nav__cta:hover { background: var(--brick-700); }
 
 .nav__burger { display: none; position: relative; width: 46px; height: 46px; border-radius: 50%; background: var(--ink); }
 .nav__burger span { position: absolute; inset-inline: 14px; height: 2px; background: #fff; border-radius: 2px; transition: transform .5s var(--ease-out); }
@@ -51,4 +45,4 @@ html.menu-open { overflow: hidden; }
   .nav__burger { display: block; }
   .nav__bar { padding-block: 8px; }
 }
-@media (max-width: 480px) { .nav__cta span { display: none; } .nav__cta { padding: 5px; } }
+@media (max-width: 480px) { .nav__cta { height: 42px; padding: 0 14px; font-size: .88rem; } .nav__logo img { height: 32px; } }

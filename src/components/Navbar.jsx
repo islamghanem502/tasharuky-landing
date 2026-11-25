@@ -12,12 +12,6 @@ const LINKS = [
   { label: 'تواصل معنا', to: '#contact' },
 ]
 
-const Arrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M7 17 17 7M8 7h9v9" />
-  </svg>
-)
-
 export default function Navbar() {
   const root = useRef(null)
   const hl = useRef(null)
@@ -98,8 +92,7 @@ export default function Navbar() {
         <div className="nav__actions">
           <button className="nav__lang" aria-label="English">EN</button>
           <a href="#projects" className="nav__cta" onClick={(e) => go(e, '#projects', 4)}>
-            <span>تبرّع الآن</span>
-            <i><Arrow /></i>
+            تبرّع الآن
           </a>
           <button className={`nav__burger ${open ? 'is-open' : ''}`} aria-label="القائمة" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
             <span /><span />
