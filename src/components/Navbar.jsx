@@ -70,10 +70,8 @@ export default function Navbar() {
           <a href={`${SITE}/sign-up`}>إنشاء حساب</a>
           <a href={`${SITE}/en`} lang="en">English</a>
         </div>
-        <svg className="menu__hand" viewBox="0 250 655 250" aria-hidden="true">
-          <g transform="translate(655 0) scale(-1 1)">
-            <Hand color="var(--teal)" ground="var(--brick)" />
-          </g>
+        <svg className="menu__hand" viewBox="0 400 1330 460" aria-hidden="true">
+          <Hand color="var(--teal)" />
         </svg>
       </div>
     </>
