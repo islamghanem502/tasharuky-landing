@@ -1,7 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Hero from './sections/Hero'
 
 function Home() {
-  return null
+  return (
+    <>
+      <Navbar />
+      <main>
+        <Hero />
+      </main>
+    </>
+  )
 }
 
 export default function App() {
