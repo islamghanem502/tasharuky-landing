@@ -1,18 +1,15 @@
-import { useEffect } from 'react'
-import { initSmooth } from './lib/smooth'
-import Navbar from './components/Navbar'
-import Hero from './sections/Hero'
-import Unity from './sections/Unity'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+function Home() {
+  return null
+}
 
 export default function App() {
-  useEffect(() => initSmooth(), [])
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero />
-        <Unity />
-      </main>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
