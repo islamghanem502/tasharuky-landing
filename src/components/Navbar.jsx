@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import Hand from './Hand'
 import './Navbar.css'
 
 const SITE = 'https://tasharuky.com'
 const LINKS = [
-  { label: 'الرئيسية', href: '/', current: true },
+  { label: 'الرئيسية', href: '/' },
   { label: 'من نحن', href: `${SITE}/ar/about` },
   { label: 'آلية العمل', href: `${SITE}/ar/use-guide` },
   { label: 'المشاريع', href: `${SITE}/ar/projects` },
@@ -14,78 +15,66 @@ const LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const bar = useRef(null)
+  const btn = useRef(null)
+  const menu = useRef(null)
 
-  // condense once the page moves; slip away on the way down, return on the way up
+  // the bar steps aside on the way down and comes back on the way up
   useEffect(() => {
     let last = window.scrollY, ticking = false
     const update = () => {
       const y = window.scrollY
-      const el = bar.current
-      if (!el) return
-      el.toggleAttribute('data-scrolled', y > 4)
-      if (Math.abs(y - last) > 6) {
-        el.toggleAttribute('data-hidden', y > last && y > 160 && !el.hasAttribute('data-open'))
+      if (Math.abs(y - last) > 8) {
+        bar.current?.toggleAttribute('data-away', y > last && y > 120)
         last = y
       }
       ticking = false
     }
     const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update) } }
     window.addEventListener('scroll', onScroll, { passive: true })
-    update()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // the menu opens as a circle growing out of the button
   useEffect(() => {
+    const r = btn.current.getBoundingClientRect()
+    menu.current.style.setProperty('--ox', `${r.left + r.width / 2}px`)
+    menu.current.style.setProperty('--oy', `${r.top + r.height / 2}px`)
     document.documentElement.style.overflow = open ? 'hidden' : ''
-    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    if (open) bar.current.removeAttribute('data-away')
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
   return (
     <>
-      <header className="nav" ref={bar} data-open={open || undefined}>
-        <div className="nav__bar wrap">
-          <a className="nav__logo" href="/" aria-label="تشاركي — الرئيسية">
-            <img src="/brand/logo.png" alt="تشاركي" width="152" height="40" />
-          </a>
-
-          <nav className="nav__links" aria-label="القائمة الرئيسية">
-            {LINKS.map((l) => (
-              <a key={l.label} href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
-            ))}
-          </nav>
-
-          <div className="nav__end">
-            <a className="nav__quiet" href={`${SITE}/en`} lang="en" hrefLang="en">EN</a>
-            <a className="nav__quiet nav__signin" href={`${SITE}/sign-in`}>دخول</a>
-            <a className="btn btn--sm" href={`${SITE}/ar/projects`}>تبرع الآن</a>
-            <button
-              type="button" className="nav__toggle" aria-expanded={open} aria-controls="nav-sheet"
-              aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'} onClick={() => setOpen((v) => !v)}
-            >
-              <span /><span />
-            </button>
-          </div>
-        </div>
+      <header className="bar" ref={bar} data-open={open || undefined}>
+        <a className="bar__logo" href="/" aria-label="تشاركي — الرئيسية"><span /></a>
+        <button
+          ref={btn} type="button" className="bar__menu"
+          aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen((v) => !v)}
+        >
+          <span className="bar__label">{open ? 'إغلاق' : 'القائمة'}</span>
+          <span className="bar__dot" aria-hidden="true"><i /><i /></span>
+        </button>
       </header>
 
-      {/* outside the header: a transformed parent would trap a fixed child */}
-      <div className="nav__sheet" id="nav-sheet" hidden={!open}>
-        <nav className="wrap" aria-label="القائمة">
+      <div className="menu" id="site-menu" ref={menu} data-open={open || undefined} inert={!open || undefined}>
+        <nav className="menu__links" aria-label="القائمة الرئيسية">
           {LINKS.map((l, i) => (
-            <a key={l.label} href={l.href} style={{ '--i': i }} aria-current={l.current ? 'page' : undefined} onClick={() => setOpen(false)}>
-              {l.label}
-            </a>
+            <a key={l.label} href={l.href} style={{ '--i': i }} onClick={() => setOpen(false)}>{l.label}</a>
           ))}
-          <div className="nav__sheet-end" style={{ '--i': LINKS.length }}>
-            <a href={`${SITE}/sign-in`}>دخول</a>
-            <span aria-hidden="true">·</span>
-            <a href={`${SITE}/sign-up`}>إنشاء حساب</a>
-            <span aria-hidden="true">·</span>
-            <a href={`${SITE}/en`} lang="en">EN</a>
-          </div>
         </nav>
+        <div className="menu__foot">
+          <a href={`${SITE}/sign-in`}>دخول</a>
+          <a href={`${SITE}/sign-up`}>إنشاء حساب</a>
+          <a href={`${SITE}/en`} lang="en">English</a>
+        </div>
+        <svg className="menu__hand" viewBox="0 250 655 250" aria-hidden="true">
+          <g transform="translate(655 0) scale(-1 1)">
+            <Hand color="var(--teal)" ground="var(--brick)" />
+          </g>
+        </svg>
       </div>
     </>
   )

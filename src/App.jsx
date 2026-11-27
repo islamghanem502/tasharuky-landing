@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
+import Give from './sections/Give'
 
 function Home() {
   return (
@@ -8,6 +9,7 @@ function Home() {
       <Navbar />
       <main>
         <Hero />
+        <Give />
       </main>
     </>
   )
