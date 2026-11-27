@@ -1,11 +1,11 @@
 .give {
   position: relative;
   overflow: hidden;
-  padding: clamp(96px, 11vw, 160px) var(--gutter);
+  padding: clamp(96px, 11vw, 150px) var(--gutter);
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(24px, 4vw, 64px);
+  gap: clamp(24px, 5vw, 80px);
 }
 .give h2 {
   max-width: 10em;
@@ -13,15 +13,11 @@
   color: var(--ink);
   text-wrap: balance;
 }
-
-/* the drawing runs out to the left edge of the screen */
-.give__art { position: relative; margin-inline-end: calc(-1 * var(--gutter)); }
-.give__carry { position: absolute; inset: 0; }
-.give__hand { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 2; }
+.give__stage { position: relative; width: min(100%, 620px); justify-self: center; }
 .give__box { position: absolute; z-index: 1; }
+.give__hand { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 2; pointer-events: none; }
 
 @media (max-width: 900px) {
-  .give { grid-template-columns: 1fr; gap: 24px; padding-bottom: 56px; }
-  /* wider than the screen, so the arm starts well off it and the palm lands in view */
-  .give__art { width: 150vw; margin-inline-end: 0; }
+  .give { grid-template-columns: 1fr; gap: 8px; padding-bottom: 72px; }
+  .give__stage { width: 100%; }
 }
