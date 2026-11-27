@@ -1,12 +1,12 @@
 import { motion, useInView } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import Hand from '@/components/Hand'
 
 /*
  * Bucket — from @uselayouts/bucket, recoloured flat in the Tasharuky palette.
  * Same build as the original: back panels, a middle layer where things fall,
  * and the front panels drawn over it so whatever drops in disappears inside.
- * Coins replace the chips, and the box is carried in by the identity hand.
+ * A single coin replaces the chips, and the box is carried in by the identity hand.
  */
 
 const BOX = {
@@ -17,55 +17,47 @@ const BOX = {
   lid: '#3e9e9b',
 }
 
-const W = 655,
-  H = 352
-const OPEN_Y = 58 // where a coin enters, just above the opening
-const SPAWN_MS = 720
+const W = 655
+const H = 352
+
+// One coin, tossed in from the upper right, again and again — slowly.
+// Positions are offsets (in box units) from where the coin comes to rest inside the box.
+const COIN = 124
+const REST = { x: 330, y: 176 }
+const PATH = [
+  { x: 290, y: -230 }, // appears
+  { x: 160, y: -300 }, // top of the arc
+  { x: 12, y: -170 }, // over the mouth of the box
+  { x: 0, y: 0 }, // gone inside
+]
+const LOOP = { duration: 2.2, repeat: Infinity, repeatDelay: 1.8 }
+const TIMES = [0, 0.36, 0.72, 1]
+const px = (v) => `${(v / W) * 100}%`
+const py = (v) => `${(v / H) * 100}%`
 
 function Coin() {
   return (
-    <svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
-      <circle cx="24" cy="24" r="23" fill="var(--gold-deep)" />
-      <circle cx="24" cy="22.5" r="21" fill="var(--gold)" />
-      <circle cx="24" cy="22.5" r="14" fill="none" stroke="var(--gold-deep)" strokeWidth="2" opacity=".55" />
+    <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+      <circle cx="60" cy="60" r="58" fill="var(--gold-deep)" />
+      <circle cx="60" cy="56" r="54" fill="var(--gold)" />
+      <circle cx="60" cy="56" r="38" fill="none" stroke="var(--gold-deep)" strokeWidth="4" opacity=".5" />
     </svg>
   )
 }
 
 const Bucket = () => {
-  const [coins, setCoins] = useState([])
   const [carried, setCarried] = useState(false)
-  const id = useRef(0)
   const frame = useRef(null)
   // watch the still frame, not the moving box: a box parked off-screen never counts as "in view"
   const seen = useInView(frame, { once: true, amount: 0.5 })
-
-  // a steady, unhurried drip of coins once the hand has brought the box in
-  useEffect(() => {
-    if (!carried || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let t
-    const drop = () => {
-      const n = ++id.current
-      setCoins((c) => [
-        ...c.slice(-7),
-        {
-          id: n,
-          x: 205 + Math.random() * 250, // inside the mouth of the box
-          r: (Math.random() - 0.5) * 50,
-          d: 1.05 + Math.random() * 0.25,
-        },
-      ])
-      t = setTimeout(drop, SPAWN_MS + Math.random() * 380)
-    }
-    drop()
-    return () => clearTimeout(t)
-  }, [carried])
+  const still = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <div ref={frame} className="relative isolate w-full max-w-[600px]" style={{ aspectRatio: `${W}/${H}` }}>
+    <div ref={frame} className="relative isolate w-full max-w-[380px]" style={{ aspectRatio: `${W}/${H}` }}>
+      {/* carried in from the left, then held tilted towards the hand */}
       <motion.div
         className="absolute inset-0"
-        initial={{ x: '62vw' }}
+        initial={{ x: still ? 0 : '-62vw' }}
         animate={seen ? { x: 0 } : undefined}
         transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
         onAnimationComplete={() => {
@@ -74,8 +66,9 @@ const Bucket = () => {
       >
         <motion.div
           className="absolute inset-0"
-          animate={carried ? { y: [0, -5, 0] } : undefined}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ rotate: -7, transformOrigin: '50% 100%' }}
+          animate={carried && !still ? { y: [0, 0, 7, 0] } : undefined}
+          transition={{ ...LOOP, times: [0, 0.74, 0.86, 1], ease: 'easeOut' }}
         >
           {/* back panels */}
           <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 z-0 h-full w-full overflow-visible" aria-hidden="true">
@@ -92,33 +85,25 @@ const Bucket = () => {
             <path d="M487.973 78.9088V42.8774L536.404 79.1144L487.973 78.9088Z" fill={BOX.corner} />
           </svg>
 
-          {/* middle: coins fall into the mouth of the box */}
+          {/* middle: the coin drops into the mouth of the box */}
           <div className="pointer-events-none absolute inset-0 z-10">
-            {coins.map((c) => (
+            {carried && !still && (
               <motion.div
-                key={c.id}
                 className="absolute inset-0"
-                initial={{ y: '-62%' }}
-                animate={{ y: '24%' }}
-                transition={{ duration: c.d, ease: [0.5, 0, 0.9, 0.5] }}
-                onAnimationComplete={() => setCoins((all) => all.filter((x) => x.id !== c.id))}
+                initial={{ x: px(PATH[0].x), y: py(PATH[0].y), opacity: 0 }}
+                animate={{ x: PATH.map((p) => px(p.x)), y: PATH.map((p) => py(p.y)), opacity: [0, 1, 1, 1] }}
+                transition={{ ...LOOP, times: TIMES, ease: ['easeOut', 'easeIn', 'easeIn'] }}
               >
                 <motion.div
                   className="absolute"
-                  style={{
-                    left: `${((c.x - 28) / W) * 100}%`,
-                    top: `${(OPEN_Y / H) * 100}%`,
-                    width: `${(56 / W) * 100}%`,
-                    aspectRatio: '1',
-                  }}
-                  initial={{ rotate: 0, scaleX: 1 }}
-                  animate={{ rotate: c.r, scaleX: [1, 0.35, 1, 0.5] }}
-                  transition={{ duration: c.d, ease: 'easeInOut' }}
+                  style={{ left: px(REST.x - COIN / 2), top: py(REST.y - COIN / 2), width: px(COIN), aspectRatio: '1' }}
+                  animate={{ rotate: [20, -40, -110, -130], scaleX: [1, 0.55, 1, 0.8] }}
+                  transition={{ ...LOOP, times: TIMES, ease: 'easeInOut' }}
                 >
                   <Coin />
                 </motion.div>
               </motion.div>
-            ))}
+            )}
           </div>
 
           {/* front panels, over the coins */}
@@ -137,13 +122,15 @@ const Bucket = () => {
             />
           </svg>
 
-          {/* the hand that carries it in, reaching from beyond the edge of the screen */}
+          {/* the hand that carries it in, reaching from beyond the left edge of the screen */}
           <svg
             viewBox={`0 0 ${W} ${H}`}
             className="pointer-events-none absolute inset-0 z-30 h-full w-full overflow-visible"
             aria-hidden="true"
           >
-            <Hand />
+            <g transform={`translate(${W} 0) scale(-1 1)`}>
+              <Hand />
+            </g>
           </svg>
         </motion.div>
       </motion.div>
