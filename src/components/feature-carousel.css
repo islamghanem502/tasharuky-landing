@@ -4,9 +4,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 40px;
+  border-radius: 32px;
   background: #164a48;
-  min-height: 560px;
 }
 
 /* the chip panel */
@@ -14,7 +13,7 @@
   position: relative;
   z-index: 30;
   flex: none;
-  height: 280px;
+  height: 236px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +46,7 @@
 .fc__stage {
   position: relative; flex: 1;
   display: flex; align-items: center; justify-content: center;
-  padding: 48px 24px;
+  padding: 36px 20px 40px;
   overflow: hidden;
   touch-action: pan-y; /* vertical scrolling stays with the page; sideways moves the stack */
   user-select: none;
@@ -55,7 +54,7 @@
   cursor: grab;
 }
 .fc__stage[data-dragging] { cursor: grabbing; }
-.fc__stack { position: relative; width: 100%; max-width: 400px; aspect-ratio: 4 / 5; }
+.fc__stack { position: relative; width: min(100%, 340px); aspect-ratio: 4 / 5; }
 
 .fc__card {
   position: absolute; inset: 0;
@@ -67,6 +66,7 @@
   cursor: pointer;
   color: var(--paper);
   will-change: transform, opacity;
+  container-type: inline-size;
 }
 .fc__card.is-active { cursor: default; }
 .fc__img {
@@ -90,12 +90,12 @@
   will-change: opacity, transform;
   background: linear-gradient(to top, rgba(10, 34, 33, 0.96) 0%, rgba(10, 34, 33, 0.8) 42%, rgba(10, 34, 33, 0) 100%);
 }
-.fc__foot h4 { font: 400 28px/1.15 var(--font-display); }
+.fc__foot h4 { font: 400 clamp(22px, 2vw, 28px)/1.15 var(--font-display); }
 .fc__foot p { font-size: 14px; line-height: 1.55; color: rgba(243, 237, 228, 0.78); }
 .fc__meter { position: relative; height: 3px; margin-top: 8px; border-radius: 3px; background: rgba(243, 237, 228, 0.22); overflow: hidden; }
 .fc__meter i { position: absolute; inset-block: 0; right: 0; border-radius: 3px; background: var(--mark); }
-.fc__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
-.fc__nums { font-size: 13px; color: rgba(243, 237, 228, 0.7); }
+.fc__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; margin-top: 10px; }
+.fc__nums { font-size: 13px; color: rgba(243, 237, 228, 0.7); white-space: nowrap; }
 .fc__nums b, .fc__nums span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; }
 .fc__nums b { color: var(--paper); font-size: 15px; }
 .fc__go {
@@ -106,6 +106,15 @@
   transition: background-color 250ms, color 250ms, gap 300ms var(--ease);
 }
 .fc__go:hover, .fc__go:focus-visible { background: var(--brick); color: var(--paper); gap: 12px; }
+
+/* a narrow card: the same foot, set tighter so the figures and the button share a line */
+@container (max-width: 340px) {
+  .fc__foot { padding: 96px 18px 18px; }
+  .fc__foot p { font-size: 13px; }
+  .fc__nums { font-size: 12px; }
+  .fc__nums b { font-size: 14px; }
+  .fc__go { height: 38px; padding: 0 14px; font-size: 13px; gap: 6px; }
+}
 
 /* a campaign that reached its goal */
 .fc__stamp {
@@ -121,11 +130,18 @@
 .fc__stamp b { font: 400 30px/1 var(--font-display); }
 .fc__stamp span { font: 500 12px/1 'IBM Plex Mono', monospace; }
 
-/* wide: the panel takes the reading side, the stack the other */
+/* wide: the panel takes the reading side, the stack the other.
+   The height follows the width but never outgrows a laptop screen, and the stack is
+   sized from that height, so the whole frame is seen at once. */
 @container (min-width: 720px) {
-  .fc { flex-direction: row; aspect-ratio: 16 / 9; min-height: 0; border-radius: 64px; }
-  .fc__panel { width: 40%; height: auto; justify-content: flex-start; padding-inline: 64px; }
+  .fc {
+    flex-direction: row;
+    height: clamp(470px, min(42cqw, 100svh - 200px), 580px);
+    border-radius: 48px;
+  }
+  .fc__panel { width: 40%; height: auto; justify-content: flex-start; padding-inline: clamp(36px, 4.4cqw, 64px); }
   .fc__fade { height: 64px; }
   .fc__chips { justify-content: flex-start; }
-  .fc__stage { padding: 64px 40px; border-inline-start: 1px solid rgba(243, 237, 228, 0.08); }
+  .fc__stage { padding: 40px 32px; border-inline-start: 1px solid rgba(243, 237, 228, 0.08); }
+  .fc__stack { width: auto; height: 100%; max-width: 100%; }
 }
