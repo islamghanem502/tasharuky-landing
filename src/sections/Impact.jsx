@@ -9,18 +9,19 @@ const FIGURES = { countries: 18, active: 100, done: 18, backers: 11667 }
 const fmt = (n) => n.toLocaleString('en-US')
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-const LEAD = 350 // ms after the card comes into view
-const STEP = 72 // ms per click of the wheels
+const LEAD = 500 // ms after the card comes into view
+const STEP = 120 // ms per click of the wheels: slow enough to read each one
+const STAGGER = 2 // clicks between one wheel starting and the next
 
 /*
  * An odometer: the figure is set at its full length from the start, all zeros
- * (00,000), and each wheel makes one full turn and clicks on to its digit, the
- * leftmost first. Nothing changes width, so the sentence around it never reflows.
+ * (00,000), and each wheel counts quietly up to its digit — no spinning past it —
+ * the leftmost first. Nothing changes width, so the sentence around it never reflows.
  */
 function useOdometer(value, on, order) {
   const target = fmt(value)
   const digits = target.replace(/\D/g, '').split('').map(Number)
-  const last = Math.max(...digits.map((d, j) => j + 10 + d))
+  const last = Math.max(...digits.map((d, j) => j * STAGGER + d))
   const [k, setK] = useState(() => (reduced() ? last : 0))
   useEffect(() => {
     if (!on || reduced()) return
@@ -31,7 +32,7 @@ function useOdometer(value, on, order) {
       setK(step)
       if (step < last) id = setTimeout(click, STEP)
     }
-    id = setTimeout(click, LEAD + order * 160)
+    id = setTimeout(click, LEAD + order * 260)
     return () => clearTimeout(id)
   }, [on, order, last])
   // each digit's place among the digits, from the left (the comma is not a wheel)
@@ -40,8 +41,8 @@ function useOdometer(value, on, order) {
   return chars
     .map((c, i) => {
       if (!/\d/.test(c)) return c
-      const r = k - place[i] // clicks this wheel has made
-      return String(r <= 0 ? 0 : r >= 10 + +c ? +c : r % 10)
+      const r = k - place[i] * STAGGER // clicks this wheel has made
+      return String(Math.max(0, Math.min(+c, r)))
     })
     .join('')
 }
