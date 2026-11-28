@@ -47,26 +47,28 @@
   stroke-linecap: round;
   stroke-dasharray: 1 2;
   stroke-dashoffset: 1.02;
-  transition: stroke-dashoffset 1500ms cubic-bezier(0.3, 0, 0.2, 1) 250ms;
+  transition: stroke-dashoffset 2400ms cubic-bezier(0.4, 0, 0.2, 1) 300ms;
 }
-.im__stem--small { stroke-width: 2.4; transition-delay: 1300ms; transition-duration: 700ms; }
+.im__stem--small { stroke-width: 2.4; transition-delay: 1900ms; transition-duration: 1100ms; }
+/* the leaves unfold softly, and only once the stem has passed them */
 .im__leaf, .im__bud {
   transform-origin: 0 0;
   scale: 0;
-  transition: scale 700ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--d);
+  opacity: 0;
+  transition: scale 1100ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d) * 1.5), opacity 700ms ease calc(var(--d) * 1.5);
 }
 .im__bud { transform-box: fill-box; transform-origin: 50% 100%; }
 .im__card[data-on] .im__stem { stroke-dashoffset: 0; }
-.im__card[data-on] .im__leaf, .im__card[data-on] .im__bud { scale: 1; }
+.im__card[data-on] .im__leaf, .im__card[data-on] .im__bud { scale: 1; opacity: 1; }
 
 /* grown, it only moves in the air */
 .im__sway { transform-box: view-box; transform-origin: 58px 190px; }
 .im__sway--small { transform-origin: 92px 190px; }
-.im__card[data-on] .im__sway { animation: im-sway 5.5s ease-in-out 2.4s infinite alternate; }
-.im__card[data-on] .im__sway--small { animation-duration: 4.2s; animation-delay: 2.8s; }
+.im__card[data-on] .im__sway { animation: im-sway 9s ease-in-out 3.6s infinite alternate; }
+.im__card[data-on] .im__sway--small { animation-duration: 7s; animation-delay: 4.2s; }
 @keyframes im-sway {
-  from { rotate: -1.6deg; }
-  to { rotate: 1.8deg; }
+  from { rotate: -0.7deg; }
+  to { rotate: 0.8deg; }
 }
 
 @media (max-width: 600px) {
@@ -76,6 +78,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .im__stem { stroke-dashoffset: 0; transition: none; }
-  .im__leaf, .im__bud { scale: 1; transition: none; }
+  .im__leaf, .im__bud { scale: 1; opacity: 1; transition: none; }
   .im__card[data-on] .im__sway { animation: none; }
 }
