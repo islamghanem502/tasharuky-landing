@@ -1,65 +1,42 @@
-/* ── أثر تشاركي: one box, four figures, and something growing out of it ── */
+/* ── أثر تشاركي: one small card, one sentence, a sprout in the corner ── */
 .im {
-  max-width: 1440px;
+  max-width: 1120px;
   margin-inline: auto;
-  /* room above the box for the plant */
-  padding: clamp(150px, 15vw, 210px) var(--gutter) clamp(96px, 10vw, 150px);
+  padding: clamp(72px, 8vw, 120px) var(--gutter);
 }
-.im__frame { position: relative; }
 
-.im__box {
-  position: relative;
-  z-index: 1; /* in front of the plant's roots */
+.im__card {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(28px, 3.6vw, 44px) clamp(24px, 4vw, 52px) 0;
   background: #fbf9f4;
   border: 1px solid var(--line);
-  border-radius: clamp(24px, 3vw, 36px);
-  padding: clamp(28px, 4vw, 56px);
-  box-shadow: 0 1px 0 rgba(30, 26, 23, 0.04), 0 36px 60px -44px rgba(30, 26, 23, 0.35);
+  border-radius: clamp(22px, 2.6vw, 30px);
+  overflow: hidden;
 }
-
-.im__head {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  align-items: end;
-  gap: 16px 56px;
-  padding-bottom: clamp(28px, 3.4vw, 44px);
-}
-.im__eyebrow { font-size: 15px; font-weight: 500; color: var(--teal); margin-bottom: 10px; }
-.im__head h2 { font: 400 clamp(34px, 3.8vw, 58px)/1.2 var(--font-display); color: var(--ink); text-wrap: balance; }
-.im__head > p { font-size: 17px; line-height: 1.85; color: var(--muted); max-width: 30em; text-wrap: pretty; }
-
-/* the figures */
-.im__stats {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
-}
-.im__stat {
-  display: flex; flex-direction: column;
-  padding: clamp(24px, 2.8vw, 36px) clamp(16px, 2.4vw, 32px) 4px;
-  border-inline-start: 1px solid var(--line);
-}
-.im__stat:first-child { border-inline-start: 0; padding-inline-start: 0; }
-.im__stat:last-child { padding-inline-end: 0; }
-.im__val {
-  order: -1;
-  margin: 0 0 14px;
-  font: 600 clamp(42px, 4.4vw, 68px)/1 var(--font-body);
-  letter-spacing: -0.035em;
+.im__text { flex: 1; min-width: 0; padding-bottom: clamp(28px, 3.6vw, 44px); }
+.im__text h2 { font-size: 15px; font-weight: 500; color: var(--teal); }
+.im__text p {
+  margin-top: 12px;
+  font: 400 clamp(24px, 2.7vw, 38px)/1.6 var(--font-display);
   color: var(--ink);
-  text-align: right;
+  text-wrap: pretty;
 }
-.im__stat dt { font-size: 16px; font-weight: 600; color: var(--ink); }
-.im__desc { margin: 6px 0 0; font-size: 14px; line-height: 1.75; color: var(--muted); text-wrap: pretty; }
+.im__n {
+  display: inline-block;
+  padding-inline: 0.08em;
+  font: 700 1.04em/1 var(--font-body);
+  letter-spacing: -0.03em;
+  color: var(--teal);
+  vertical-align: -0.02em;
+}
 
-/* the plant, rooted behind the box's top edge, on the far side from the heading */
+/* the sprout, rooted in the card's foot */
 .im__plant {
-  position: absolute;
-  z-index: 0;
-  left: clamp(28px, 7%, 110px);
-  bottom: calc(100% - 22px);
-  width: clamp(112px, 10vw, 150px);
+  flex: none;
+  display: block;
+  width: clamp(92px, 11vw, 132px);
   height: auto;
   overflow: visible;
 }
@@ -79,41 +56,26 @@
   transition: scale 700ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--d);
 }
 .im__bud { transform-box: fill-box; transform-origin: 50% 100%; }
-.im__frame[data-on] .im__stem { stroke-dashoffset: 0; }
-.im__frame[data-on] .im__leaf, .im__frame[data-on] .im__bud { scale: 1; }
+.im__card[data-on] .im__stem { stroke-dashoffset: 0; }
+.im__card[data-on] .im__leaf, .im__card[data-on] .im__bud { scale: 1; }
 
 /* grown, it only moves in the air */
 .im__sway { transform-box: view-box; transform-origin: 58px 190px; }
 .im__sway--small { transform-origin: 92px 190px; }
-.im__frame[data-on] .im__sway { animation: im-sway 5.5s ease-in-out 2.4s infinite alternate; }
-.im__frame[data-on] .im__sway--small { animation-duration: 4.2s; animation-delay: 2.8s; }
+.im__card[data-on] .im__sway { animation: im-sway 5.5s ease-in-out 2.4s infinite alternate; }
+.im__card[data-on] .im__sway--small { animation-duration: 4.2s; animation-delay: 2.8s; }
 @keyframes im-sway {
   from { rotate: -1.6deg; }
   to { rotate: 1.8deg; }
 }
 
-@media (max-width: 960px) {
-  .im__head { grid-template-columns: 1fr; }
-  .im__head > p { font-size: 16px; }
-  .im__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .im__stat, .im__stat:first-child, .im__stat:last-child { padding: 24px 22px 22px; }
-  .im__stat:nth-child(odd) { border-inline-start: 0; padding-inline-start: 0; }
-  .im__stat:nth-child(even) { padding-inline-end: 0; }
-  .im__stat:nth-child(n + 3) { border-top: 1px solid var(--line); }
-}
-@media (max-width: 480px) {
-  .im { padding-top: 132px; }
-  .im__box { padding: 24px 20px 8px; }
-  .im__plant { width: 84px; left: 18px; bottom: calc(100% - 16px); }
-  .im__stat, .im__stat:first-child, .im__stat:last-child { padding-block: 20px 18px; }
-  .im__stat:nth-child(odd) { padding-inline-end: 14px; }
-  .im__stat:nth-child(even) { padding-inline-start: 14px; }
-  .im__val { font-size: 38px; margin-bottom: 10px; }
-  .im__stat dt { font-size: 15px; }
-  .im__desc { font-size: 13px; }
+@media (max-width: 600px) {
+  .im__card { gap: 6px; padding-inline: 22px 12px; }
+  .im__text p { font-size: 23px; line-height: 1.65; }
+  .im__plant { width: 70px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .im__stem { stroke-dashoffset: 0; transition: none; }
   .im__leaf, .im__bud { scale: 1; transition: none; }
-  .im__frame[data-on] .im__sway { animation: none; }
+  .im__card[data-on] .im__sway { animation: none; }
 }

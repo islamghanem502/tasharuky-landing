@@ -1,27 +1,21 @@
 import { useInView } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import Roll from '@/components/Roll'
-import Underline from '@/components/Underline'
 import './Impact.css'
 
 // the figures as published on tasharuky.com, under "أثر تشاركي"
-const STATS = [
-  { value: 18, label: 'دولة نعمل بها', desc: 'نوسع أثر العطاء ليصل إلى مجتمعات أكثر حول العالم.' },
-  { value: 100, label: 'حملة نشطة', desc: 'حملات إنسانية وتنموية مصممة لإحداث أثر مستدام.' },
-  { value: 18, label: 'مشاريع مكتملة', desc: 'مشاريع أُنجزت بنجاح وأسهمت في أثر ملموس للمستفيدين.' },
-  { value: 11667, label: 'داعم', desc: 'أفراد ومؤسسات يساهمون في حملات ذات أثر حقيقي.' },
-]
+const FIGURES = { countries: 18, active: 100, done: 18, backers: 11667 }
 
 const fmt = (n) => n.toLocaleString('en-US')
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-const LEAD = 350 // ms after the box comes into view
+const LEAD = 350 // ms after the card comes into view
 const STEP = 72 // ms per click of the wheels
 
 /*
  * An odometer: the figure is set at its full length from the start, all zeros
  * (00,000), and each wheel makes one full turn and clicks on to its digit, the
- * leftmost first. Nothing changes width, so nothing on the line moves while it counts.
+ * leftmost first. Nothing changes width, so the sentence around it never reflows.
  */
 function useOdometer(value, on, order) {
   const target = fmt(value)
@@ -37,7 +31,7 @@ function useOdometer(value, on, order) {
       setK(step)
       if (step < last) id = setTimeout(click, STEP)
     }
-    id = setTimeout(click, LEAD + order * 140)
+    id = setTimeout(click, LEAD + order * 160)
     return () => clearTimeout(id)
   }, [on, order, last])
   // each digit's place among the digits, from the left (the comma is not a wheel)
@@ -52,17 +46,13 @@ function useOdometer(value, on, order) {
     .join('')
 }
 
-function Stat({ s, i, on }) {
-  const text = useOdometer(s.value, on, i)
+function Figure({ value, order, on }) {
+  const text = useOdometer(value, on, order)
   return (
-    <div className="im__stat">
-      <dt>{s.label}</dt>
-      <dd className="im__val">
-        <span className="sr-only">{fmt(s.value)}</span>
-        <Roll text={text} />
-      </dd>
-      <dd className="im__desc">{s.desc}</dd>
-    </div>
+    <b className="im__n">
+      <span className="sr-only">{fmt(value)}</span>
+      <Roll text={text} />
+    </b>
   )
 }
 
@@ -79,7 +69,7 @@ function Leaf({ x, y, r, s = 1, flip, tone, d }) {
 }
 
 /*
- * A sprout growing out of the top of the box while the numbers count up:
+ * A sprout growing up from the foot of the card while the numbers count:
  * the stem draws upwards, the leaves open one by one as it passes them, a bud last.
  * Then it only sways a little. Transform and stroke only, so it costs nothing to draw.
  */
@@ -109,30 +99,26 @@ function Plant() {
   )
 }
 
+/*
+ * The four figures, said rather than tabulated: one sentence in one small card,
+ * each number rolling into place where it falls in the line, and a sprout growing
+ * in the corner as they settle.
+ */
 export default function Impact() {
-  const box = useRef(null)
-  const on = useInView(box, { once: true, amount: 0.45 })
+  const card = useRef(null)
+  const on = useInView(card, { once: true, amount: 0.5 })
 
   return (
     <section className="im" id="impact" aria-labelledby="im-title">
-      <div className="im__frame" ref={box} data-on={on || undefined}>
-        <Plant />
-        <div className="im__box">
-          <header className="im__head">
-            <div>
-              <p className="im__eyebrow">أثر تشاركي</p>
-              <h2 id="im-title">
-                أرقام تعبّر عن <Underline>أثرٍ مستمر</Underline>
-              </h2>
-            </div>
-            <p>نقيس اتساع عملنا من خلال المجتمعات التي نصل إليها، والحملات التي ندعمها، والأشخاص الذين يشاركون في صناعة الأثر.</p>
-          </header>
-          <dl className="im__stats">
-            {STATS.map((s, i) => (
-              <Stat key={s.label} s={s} i={i} on={on} />
-            ))}
-          </dl>
+      <div className="im__card" ref={card} data-on={on || undefined}>
+        <div className="im__text">
+          <h2 id="im-title">أثر تشاركي</h2>
+          <p>
+            نعمل في <Figure value={FIGURES.countries} order={0} on={on} /> دولة، ولدينا <Figure value={FIGURES.active} order={1} on={on} /> حملة نشطة،
+            وأنجزنا <Figure value={FIGURES.done} order={2} on={on} /> مشروعًا، وكل ذلك بفضل <Figure value={FIGURES.backers} order={3} on={on} /> داعمًا.
+          </p>
         </div>
+        <Plant />
       </div>
     </section>
   )
