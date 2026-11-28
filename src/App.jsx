@@ -4,6 +4,9 @@ import Hero from './sections/Hero'
 import Give from './sections/Give'
 import Campaigns from './sections/Campaigns'
 import About from './sections/About'
+import Notice from './sections/Notice'
+import Impact from './sections/Impact'
+import Footer from './components/Footer'
 
 function Home() {
   return (
@@ -14,7 +17,10 @@ function Home() {
         <Give />
         <Campaigns />
         <About />
+        <Notice />
+        <Impact />
       </main>
+      <Footer />
     </>
   )
 }
