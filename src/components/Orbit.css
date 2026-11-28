@@ -23,9 +23,6 @@
 .orbit__item img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover;
-  transform: scale(1.02);
-  transition: transform 9s linear;
 }
-.orbit__item[data-focus] img { transform: scale(1.09); }
-.orbit__lit { opacity: 0; transition: opacity 2200ms ease, transform 9s linear !important; }
+.orbit__lit { opacity: 0; transition: opacity 2200ms ease; }
 .orbit__item[data-lit] .orbit__lit { opacity: 1; }
