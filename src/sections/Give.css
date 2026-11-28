@@ -12,7 +12,7 @@
   color: var(--ink);
   text-wrap: balance;
 }
-.give p { margin-top: 22px; font-size: 18px; line-height: 1.85; color: var(--muted); text-wrap: pretty; }
+.give__text p { margin-top: 22px; font-size: 18px; line-height: 1.85; color: var(--muted); text-wrap: pretty; }
 .give .cta { margin-top: 34px; }
 
 /* room above the box for the coin to fall through */
@@ -21,6 +21,6 @@
 
 @media (max-width: 900px) {
   .give { grid-template-columns: 1fr; gap: 0; }
-  .give p { font-size: 17px; }
-  .give__stage { padding-top: 52%; }
+  .give__text p { font-size: 17px; }
+  .give__stage { padding-top: 80%; }
 }

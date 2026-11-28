@@ -1,15 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Coin, { COIN_ASPECT } from '@/components/Coin'
+import Receipt from '@/components/Receipt'
 
 /*
  * Bucket — from @uselayouts/bucket, recoloured flat in the Tasharuky palette.
  * Same build as the original: back panels, a middle layer where things fall,
  * and the front panels drawn over it so whatever drops in disappears inside.
  *
- * Everything moves off one clock, so the fall, the turn of the coin, the light and
- * the flaps can never drift apart:
- *   the coin falls and makes one full turn → it goes in → light spills from the mouth
- *   and the flaps answer on a soft, dying spring → a pause → again.
+ * The box is a receipt printer for impact. Everything runs off one clock:
+ *   a coin falls and turns once → it goes in, light spills, the flaps answer →
+ *   a receipt feeds out of the mouth in printer steps → a stamp lands: "موثّق",
+ *   and the last line is ticked → the slip is torn off and drifts away → again,
+ *   with the next campaign and the next contribution number.
  */
 
 const BOX = { flap: '#5aafac', inside: '#1c5d5c', corner: '#164e4d', body: 'var(--teal)', lid: '#3e9e9b' }
@@ -19,46 +21,149 @@ const H = 352
 const COIN_W = 165
 const REST = { x: 330, y: 190 } // where the coin ends up, hidden inside the box
 const DROP = 560 // how far above that it starts
+const SLIP = { w: 236, foot: 100, hide: 84 } // receipt width; its foot stays inside; it hides below the lid edge
 
-const PERIOD = 6.4 // seconds, one full cycle
-const FALL = 2.9 // seconds the coin is in the air
+// one cycle, in seconds
+const FALL = 2.9
+const PRINT = [3.3, 5.9]
+const FEED_STEPS = 15
+const STAMP = 6.5
+const TEAR = 8.7
+const FLY = [8.8, 10.2]
+const PERIOD = 10.8
+
+// real campaigns and figures from tasharuky.com
+const CAMPAIGNS = [
+  { name: 'سقيا وحياة', desc: 'تأمين مياه الشرب للأسر النازحة في غزة', pct: 92, code: 'WTR' },
+  { name: 'عطاء وأمان', desc: 'لنواصل الدعم للأسر النازحة في غزة', pct: 76, code: 'FOD' },
+  { name: 'معًا لشتاء أكثر دفئًا', desc: 'إغاثة الأطفال والأسر النازحة في غزة', pct: 73, code: 'WNT' },
+  { name: 'إكفلني', desc: 'دعم وكفالة 500 يتيم في غزة', pct: 36, code: 'ORP' },
+]
+const FIRST_NO = 11665
 
 const px = (v) => `${(v / W) * 100}%`
 const py = (v) => `${(v / H) * 100}%`
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
+const easeInOut = (v) => (v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2)
+const easeOut = (v) => 1 - Math.pow(1 - v, 3)
+// a thermal printer feeds in short pulls with rests between them
+const feed = (v, n) => {
+  if (v <= 0) return 0
+  if (v >= 1) return 1
+  const k = Math.floor(v * n)
+  const f = v * n - k
+  return (k + easeOut(clamp01(f / 0.62))) / n
+}
+// a damped swing, starting at rest, for the flaps
+const ring = (dt, amp) => (dt > 0 ? amp * Math.exp(-dt * 2.4) * Math.sin(2 * Math.PI * 1.05 * dt) : 0)
+
+const today = () => {
+  const d = new Date()
+  const z = (n) => String(n).padStart(2, '0')
+  return `${z(d.getDate())}.${z(d.getMonth() + 1)}.${d.getFullYear()}`
+}
 
 const Bucket = ({ active = true }) => {
+  const root = useRef(null)
   const coinWrap = useRef(null)
   const coin = useRef(null)
   const glow = useRef(null)
   const flapL = useRef(null)
   const flapR = useRef(null)
+  const slip = useRef(null)
+  const stamp = useRef(null)
+  const done = useRef(null)
+  const [cycle, setCycle] = useState(0)
+  const [date] = useState(today)
 
   useEffect(() => {
-    if (!active || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const size = { w: 1, h: 1, slipH: 1 }
+    const measure = () => {
+      size.w = root.current.offsetWidth
+      size.h = root.current.offsetHeight
+      size.slipH = slip.current.offsetHeight
+    }
+    const ro = new ResizeObserver(measure)
+    ro.observe(root.current)
+    ro.observe(slip.current)
+    measure()
+
+    const showStamped = () => {
+      slip.current.style.opacity = '1'
+      slip.current.style.transform = 'none'
+      stamp.current.style.opacity = '0.92'
+      done.current.toggleAttribute('data-done', true)
+    }
+    if (still) {
+      showStamped()
+      return () => ro.disconnect()
+    }
+    if (!active) return () => ro.disconnect()
+
     let raf = 0
     let last = performance.now()
     let clock = 0
     let visible = true
+    let shown = 0
 
     const frame = (now) => {
       clock += Math.min(now - last, 50) / 1000
       last = now
+      const n = Math.floor(clock / PERIOD)
+      if (n !== shown) {
+        shown = n
+        setCycle(n)
+      }
       const t = clock % PERIOD
+      const unit = size.h / H
 
-      // the fall: starts gently, gathers speed like a real drop
+      // ── the coin: starts gently, gathers speed like a real drop, one full turn
       const u = clamp01(t / FALL)
       const y = -DROP * (1 - (0.18 * u + 0.82 * u * u))
       coinWrap.current.style.transform = `translate3d(0, ${((y / H) * 100).toFixed(3)}%, 0)`
       coinWrap.current.style.opacity = (t < FALL ? clamp01(t / 0.45) : 0).toFixed(3)
-      coin.current?.turn(u * Math.PI * 2)
+      if (t < FALL) coin.current?.turn(u * Math.PI * 2)
 
-      // after it goes in
+      // ── it goes in: light from the mouth
       const tau = t - FALL
-      const g = tau > 0 ? (1 - Math.exp(-tau / 0.12)) * Math.exp(-tau / 0.85) : 0
-      glow.current.style.opacity = (g * 1.25).toFixed(3)
+      const g = tau > 0 ? (1 - Math.exp(-tau / 0.12)) * Math.exp(-tau / 0.8) : 0
+      glow.current.style.opacity = g.toFixed(3)
       glow.current.style.transform = `scale(${(0.85 + 0.25 * clamp01(tau / 1.2)).toFixed(3)})`
-      const a = tau > 0 ? 8 * Math.exp(-tau * 2.4) * Math.sin(2 * Math.PI * 1.05 * tau) : 0
+
+      // ── the receipt
+      const hidden = size.slipH - (SLIP.foot - SLIP.hide) * unit // pushed down until its top sits under the lid edge
+      let sy = hidden
+      let sx = 0
+      let rot = 0
+      let op = 1
+      if (t < PRINT[0]) op = 0
+      else if (t < PRINT[1]) sy = hidden * (1 - feed((t - PRINT[0]) / (PRINT[1] - PRINT[0]), FEED_STEPS))
+      else if (t < FLY[0]) {
+        sy = 0
+        const since = t - PRINT[1]
+        rot = 1.4 * Math.sin(2 * Math.PI * 0.32 * since) * clamp01(since / 0.9) // paper settling in the air
+        const hit = t - STAMP - 0.16
+        if (hit > 0 && hit < 0.32) sy += 4 * unit * Math.sin((Math.PI * hit) / 0.32) // the stamp presses it down
+        if (t > TEAR) sy -= 8 * unit * easeOut(clamp01((t - TEAR) / 0.1)) // torn: a short jerk up
+      } else if (t < FLY[1]) {
+        const q = easeInOut((t - FLY[0]) / (FLY[1] - FLY[0]))
+        sx = -0.26 * size.w * q
+        sy = -8 * unit - 0.75 * size.h * q
+        rot = -16 * q
+        op = 1 - Math.pow(q, 1.6)
+      } else op = 0
+      slip.current.style.opacity = op.toFixed(3)
+      slip.current.style.transform = `translate3d(${sx.toFixed(2)}px, ${sy.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg)`
+
+      // ── the stamp
+      const s = clamp01((t - STAMP) / 0.16)
+      stamp.current.style.opacity = (t > STAMP && t < FLY[1] ? Math.min(1, s * 1.6) * 0.92 : 0).toFixed(3)
+      stamp.current.style.transform = `scale(${(1.5 - 0.5 * s * s).toFixed(3)})`
+      done.current.toggleAttribute('data-done', t > STAMP + 0.16 && t < FLY[1])
+
+      // ── the flaps answer the coin, and the tear
+      const a = ring(tau, 8) + ring(t - TEAR, 4)
       flapR.current.style.transform = `rotate(${a.toFixed(3)}deg)`
       flapL.current.style.transform = `rotate(${(-a).toFixed(3)}deg)`
 
@@ -74,7 +179,7 @@ const Bucket = ({ active = true }) => {
       visible = e.isIntersecting && !document.hidden
       wake()
     })
-    io.observe(coinWrap.current.parentElement)
+    io.observe(root.current)
     const onVis = () => {
       visible = !document.hidden
       wake()
@@ -83,6 +188,7 @@ const Bucket = ({ active = true }) => {
     wake()
     return () => {
       cancelAnimationFrame(raf)
+      ro.disconnect()
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)
     }
@@ -91,7 +197,7 @@ const Bucket = ({ active = true }) => {
   const flapStyle = (origin) => ({ transformBox: 'view-box', transformOrigin: origin })
 
   return (
-    <div className="relative isolate w-full" style={{ aspectRatio: `${W}/${H}` }}>
+    <div ref={root} className="relative isolate w-full" style={{ aspectRatio: `${W}/${H}`, containerType: 'inline-size' }}>
       {/* the shadow it casts on the page: light from the upper left */}
       <svg viewBox={`0 0 ${W} ${H}`} className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
         <defs>
@@ -147,6 +253,16 @@ const Bucket = ({ active = true }) => {
             background: 'radial-gradient(50% 50% at 50% 72%, rgba(255, 214, 120, 0.8), rgba(255, 214, 120, 0) 70%)',
           }}
         />
+        <div className="absolute" style={{ left: px(REST.x - SLIP.w / 2), width: px(SLIP.w), bottom: py(H - SLIP.foot), clipPath: 'inset(-1000% -1000% 0 -1000%)' }}>
+          <Receipt
+            rootRef={slip}
+            stampRef={stamp}
+            doneRef={done}
+            campaign={CAMPAIGNS[cycle % CAMPAIGNS.length]}
+            no={FIRST_NO + cycle}
+            date={date}
+          />
+        </div>
         <div ref={coinWrap} className="absolute inset-0" style={{ opacity: 0, willChange: 'transform' }}>
           <div
             className="absolute"

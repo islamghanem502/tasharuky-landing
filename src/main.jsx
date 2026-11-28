@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@fontsource/lalezar'
 import '@fontsource-variable/alexandria'
+import '@fontsource/ibm-plex-mono/500.css'
 import './styles.css'
 import App from './App.jsx'
 
