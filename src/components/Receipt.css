@@ -1,4 +1,5 @@
-/* everything is sized in cqw of the box, so the slip scales with it */
+/* everything is sized in cqw of the box, so the slip scales with it — type included,
+   so on a phone it stays the same slip, only smaller, instead of overflowing */
 .rc {
   position: relative;
   transform-origin: 50% 100%;
@@ -11,9 +12,9 @@
   --ink: #2b2724;
   --tooth: 1.5cqw;
   position: relative;
-  padding: 3.2cqw 2.6cqw 4cqw;
+  padding: 2.8cqw 2.8cqw 4.6cqw; /* the last 3.2cqw stays inside the box */
   color: var(--ink);
-  font: 400 max(8px, 1.9cqw)/1.55 var(--font-body);
+  font: 400 max(6.5px, 1.9cqw)/1.55 var(--font-body);
   background:
     /* the slip bends where it leaves the slot */
     linear-gradient(to bottom, rgba(255, 255, 255, 0) 70%, rgba(40, 30, 20, 0.08)),
@@ -31,33 +32,36 @@
 
 .rc__mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; letter-spacing: 0.02em; }
 
-.rc__head { display: flex; align-items: center; gap: 1.6cqw; }
-.rc__mark { width: 4cqw; height: auto; fill: var(--ink); flex: none; }
-.rc__head div { display: grid; line-height: 1.15; }
-.rc__head b { font: 400 max(13px, 3.4cqw)/1.1 var(--font-display); }
-.rc__head span { font-size: 0.86em; opacity: 0.7; }
+.rc__head { display: flex; align-items: center; gap: 1.4cqw; }
+.rc__mark { width: 3.6cqw; height: auto; fill: var(--ink); flex: none; }
+.rc__brand { display: grid; line-height: 1.15; }
+.rc__brand b { font: 400 3.2cqw/1.1 var(--font-display); }
+.rc__brand span { font-size: 0.86em; opacity: 0.7; }
+.rc__meta { margin-inline-start: auto; display: grid; justify-items: end; font-size: 0.84em; line-height: 1.45; opacity: 0.85; }
 
 .rc__paper hr {
-  margin: 1.6cqw 0; height: 0; border: 0;
+  margin: 1.3cqw 0; height: 0; border: 0;
   border-top: max(1px, 0.24cqw) dashed rgba(43, 39, 36, 0.55);
 }
 
-.rc__row { display: flex; align-items: baseline; gap: 0.8cqw; }
-.rc__row i { flex: 1; border-bottom: max(1px, 0.22cqw) dotted rgba(43, 39, 36, 0.45); transform: translateY(-0.5cqw); }
-
 .rc__label { font-size: 0.82em; opacity: 0.65; }
-.rc__title { font: 400 max(12px, 3cqw)/1.2 var(--font-display); margin-top: 0.4cqw; }
-.rc__sub { font-size: 0.86em; line-height: 1.45; opacity: 0.8; margin-top: 0.3cqw; }
+.rc__title { font: 400 2.9cqw/1.2 var(--font-display); margin-top: 0.2cqw; }
+.rc__sub { font-size: 0.86em; line-height: 1.4; opacity: 0.8; margin-top: 0.2cqw; }
 
-.rc__meter { display: flex; align-items: center; gap: 1.2cqw; margin-top: 1.4cqw; }
+.rc__meter { display: flex; align-items: center; gap: 1.2cqw; margin-top: 1.1cqw; }
 .rc__cells { display: flex; flex: 1; gap: 0.32cqw; direction: rtl; }
-.rc__cells i { flex: 1; height: 1.5cqw; box-shadow: inset 0 0 0 max(1px, 0.2cqw) var(--ink); }
+.rc__cells i { flex: 1; height: 1.3cqw; box-shadow: inset 0 0 0 max(1px, 0.2cqw) var(--ink); }
 .rc__cells i[data-on] { background: var(--ink); }
 
-.rc__track { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5cqw; }
-.rc__track li { display: flex; align-items: center; gap: 1.2cqw; }
+/* the three stages along one line */
+.rc__track {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; justify-content: space-between; gap: 1cqw;
+  font-size: 0.9em; white-space: nowrap;
+}
+.rc__track li { display: flex; align-items: center; gap: 0.8cqw; }
 .rc__track li::before {
-  content: ''; flex: none; width: 1.6cqw; height: 1.6cqw;
+  content: ''; flex: none; width: 1.5cqw; height: 1.5cqw;
   box-shadow: inset 0 0 0 max(1px, 0.22cqw) var(--ink);
 }
 .rc__track li[data-done]::before {
@@ -65,14 +69,17 @@
     linear-gradient(var(--ink), var(--ink)) center / 55% 55% no-repeat;
 }
 
-.rc__barcode { display: flex; gap: 0; height: 5cqw; margin: 0.4cqw 0.4cqw 0; }
-.rc__barcode i { background: var(--ink); min-width: 0.25cqw; }
-.rc__code { text-align: center; font-size: 0.78em; opacity: 0.75; margin-top: 0.6cqw; }
-.rc__thanks { text-align: center; font-size: 0.86em; margin-top: 1.2cqw; }
+/* barcode on one side, the thanks and the code on the other */
+.rc__foot { display: flex; align-items: center; gap: 2cqw; }
+.rc__sign { flex: 1; display: grid; justify-items: start; gap: 0.2cqw; }
+.rc__barcode { flex: none; width: 42%; display: flex; height: 4.6cqw; order: 2; }
+.rc__barcode i { background: var(--ink); min-width: 0.22cqw; }
+.rc__thanks { font-size: 0.86em; line-height: 1.3; }
+.rc__code { font-size: 0.72em; opacity: 0.7; }
 
 /* the rubber stamp: brick ink, a double rule, and the gaps a real stamp leaves */
 .rc__stamp {
-  position: absolute; left: 2.4cqw; top: 63%;
+  position: absolute; left: 4cqw; top: 69%;
   display: grid; justify-items: center; gap: 0.3cqw;
   padding: 1cqw 2.2cqw 1.2cqw;
   color: var(--brick);
@@ -84,5 +91,5 @@
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -9 5.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E") 0 0 / 60% auto;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -9 5.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E") 0 0 / 60% auto;
 }
-.rc__stamp b { font: 400 max(13px, 3.4cqw)/1 var(--font-display); }
+.rc__stamp b { font: 400 3.4cqw/1 var(--font-display); }
 .rc__stamp span { font-size: 0.78em; }

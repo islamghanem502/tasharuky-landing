@@ -1,5 +1,5 @@
 .give {
-  padding: clamp(96px, 11vw, 160px) var(--gutter);
+  padding: clamp(48px, 6vw, 96px) var(--gutter) clamp(88px, 9vw, 136px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: end;
@@ -15,12 +15,12 @@
 .give__text p { margin-top: 22px; font-size: 18px; line-height: 1.85; color: var(--muted); text-wrap: pretty; }
 .give .cta { margin-top: 34px; }
 
-/* room above the box for the coin to fall through */
-.give__stage { padding-top: 46%; }
-.give__box { position: relative; width: min(100%, 520px); margin-inline: auto; }
+/* the box measures the room it needs above itself for the slip it prints */
+.give__box { position: relative; width: min(100%, 500px); margin-inline: auto; }
 
 @media (max-width: 900px) {
-  .give { grid-template-columns: 1fr; gap: 0; }
+  .give { grid-template-columns: 1fr; gap: 0; padding-top: 24px; }
   .give__text p { font-size: 17px; }
-  .give__stage { padding-top: 80%; }
+  /* clear of the button for the coin's first moments */
+  .give__stage { margin-top: 56px; }
 }
