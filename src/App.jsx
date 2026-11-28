@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
 import Give from './sections/Give'
 import Campaigns from './sections/Campaigns'
+import About from './sections/About'
 
 function Home() {
   return (
@@ -12,6 +13,7 @@ function Home() {
         <Hero />
         <Give />
         <Campaigns />
+        <About />
       </main>
     </>
   )
