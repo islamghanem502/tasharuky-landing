@@ -1,95 +1,162 @@
-/* ── bar ─────────────────────────────────────────────── */
+/* ── bar ─────────────────────────────────────────────────── */
 .bar {
   position: fixed; inset: 0 0 auto; z-index: 60;
-  height: var(--bar-h);
-  padding-inline: var(--gutter);
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--paper);
-  transition: transform 800ms var(--ease), background-color 600ms var(--ease);
+  padding: 14px var(--gutter) 0;
+  pointer-events: none; /* only the strip itself takes the pointer */
+  transition: transform 700ms var(--ease);
 }
-.bar[data-away] { transform: translateY(-100%); }
-.bar[data-open] { background: transparent; }
+.bar[data-away] { transform: translateY(calc(-100% - 16px)); }
 
+.bar__inner {
+  pointer-events: auto;
+  max-width: 1440px;
+  height: 60px;
+  margin-inline: auto;
+  padding-inline: 4px;
+  display: flex; align-items: center; gap: 24px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition:
+    max-width 700ms var(--ease),
+    padding 700ms var(--ease),
+    background-color 400ms ease,
+    border-color 400ms ease,
+    box-shadow 400ms ease;
+}
+/* once you scroll: a floating strip of paper */
+.bar[data-scrolled] .bar__inner {
+  max-width: 1180px;
+  padding-inline: 22px 8px;
+  background: #fbf9f4;
+  border-color: var(--line);
+  box-shadow: 0 1px 2px rgba(30, 26, 23, 0.06), 0 14px 32px -18px rgba(30, 26, 23, 0.4);
+}
+
+.bar__logo { flex: none; }
 .bar__logo span {
-  display: block; width: 128px; aspect-ratio: 1600 / 420;
+  display: block; width: 118px; aspect-ratio: 1600 / 420;
   background: var(--ink);
   -webkit-mask: url('/brand/logo.png') center / contain no-repeat;
   mask: url('/brand/logo.png') center / contain no-repeat;
-  transition: background-color 600ms var(--ease);
 }
-.bar[data-open] .bar__logo span { background: var(--paper); }
 
+.bar__links { display: flex; align-items: center; gap: 4px; margin-inline: auto; }
+.bar__links a {
+  position: relative;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 15px; font-weight: 500; color: var(--ink);
+  transition: background-color 250ms ease, color 250ms ease;
+}
+.bar__links a:hover { background: rgba(30, 26, 23, 0.06); }
+
+.bar__end { display: flex; align-items: center; gap: 8px; margin-inline-start: auto; }
+.bar__links + .bar__end { margin-inline-start: 0; }
+.bar__lang {
+  display: grid; place-items: center;
+  height: 44px; padding: 0 14px; border-radius: 999px;
+  font: 500 13px/1 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink);
+  transition: background-color 250ms ease;
+}
+.bar__lang:hover { background: rgba(30, 26, 23, 0.06); }
+.bar__give {
+  display: inline-flex; align-items: center;
+  height: 44px; padding: 0 22px; border-radius: 999px;
+  background: var(--brick); color: var(--paper);
+  font-size: 15px; font-weight: 500;
+  transition: background-color 300ms ease;
+}
+.bar__give:hover { background: var(--brick-deep); }
+
+/* the menu button, for narrow screens */
 .bar__menu {
-  display: inline-flex; align-items: center; gap: 14px;
-  padding: 0; border: 0; background: none; cursor: pointer;
-  font: 500 15px/1 var(--font-body); color: var(--ink);
-  transition: color 600ms var(--ease);
-}
-.bar[data-open] .bar__menu { color: var(--paper); }
-.bar__dot {
-  position: relative; width: 48px; height: 48px; border-radius: 50%;
+  position: relative; flex: none;
+  width: 44px; height: 44px; border-radius: 50%;
+  padding: 0; border: 0; cursor: pointer;
   background: var(--ink);
-  transition: background-color 600ms var(--ease), transform 500ms var(--ease);
+  display: none;
+  transition: background-color 500ms var(--ease);
 }
-.bar__menu:hover .bar__dot { transform: scale(1.06); }
-.bar__dot i {
-  position: absolute; left: 15px; right: 15px; height: 2px; border-radius: 2px;
+.bar__menu i {
+  position: absolute; left: 14px; right: 14px; height: 2px; border-radius: 2px;
   background: var(--paper);
-  transition: transform 700ms var(--ease), top 700ms var(--ease), background-color 600ms var(--ease);
+  transition: transform 600ms var(--ease), top 600ms var(--ease), background-color 500ms var(--ease);
 }
-.bar__dot i:first-child { top: 20px; }
-.bar__dot i:last-child { top: 26px; }
-.bar[data-open] .bar__dot { background: var(--paper); }
-.bar[data-open] .bar__dot i { top: 23px; background: var(--brick); }
-.bar[data-open] .bar__dot i:first-child { transform: rotate(45deg); }
-.bar[data-open] .bar__dot i:last-child { transform: rotate(-45deg); }
+.bar__menu i:first-child { top: 18px; }
+.bar__menu i:last-child { top: 24px; }
 
-/* ── menu ────────────────────────────────────────────── */
+/* menu open: the strip lets go of its paper and sits on the brick */
+.bar[data-open] .bar__inner { background: transparent; border-color: transparent; box-shadow: none; }
+.bar[data-open] .bar__logo span { background: var(--paper); }
+.bar[data-open] .bar__give, .bar[data-open] .bar__lang { opacity: 0; pointer-events: none; }
+.bar[data-open] .bar__menu { background: var(--paper); }
+.bar[data-open] .bar__menu i { top: 21px; background: var(--brick); }
+.bar[data-open] .bar__menu i:first-child { transform: rotate(45deg); }
+.bar[data-open] .bar__menu i:last-child { transform: rotate(-45deg); }
+
+@media (max-width: 1079px) {
+  .bar__links, .bar__lang { display: none; }
+  .bar__menu { display: block; }
+  .bar[data-scrolled] .bar__inner { padding-inline: 18px 8px; }
+}
+@media (max-width: 480px) {
+  .bar { padding-top: 10px; }
+  .bar__inner { height: 56px; gap: 12px; }
+  .bar__logo span { width: 104px; }
+  .bar__give { height: 40px; padding: 0 16px; font-size: 14px; }
+  .bar__menu { width: 40px; height: 40px; }
+  .bar__menu i { left: 12px; right: 12px; }
+  .bar__menu i:first-child { top: 16px; }
+  .bar__menu i:last-child { top: 22px; }
+  .bar[data-open] .bar__menu i { top: 19px; }
+}
+
+/* ── menu (narrow screens) ───────────────────────────────── */
 .menu {
   position: fixed; inset: 0; z-index: 55;
   background: var(--brick); color: var(--paper);
-  display: grid; grid-template-rows: 1fr auto;
-  padding: calc(var(--bar-h) + 24px) var(--gutter) 40px;
-  overflow: hidden;
-  clip-path: circle(0 at var(--ox, 90%) var(--oy, 40px));
+  display: grid; grid-template-rows: 1fr auto; gap: 32px;
+  padding: calc(var(--bar-h) + 40px) var(--gutter) 36px;
+  overflow-y: auto;
+  clip-path: circle(0 at var(--ox, 10%) var(--oy, 40px));
   visibility: hidden;
-  transition: clip-path 1000ms cubic-bezier(0.76, 0, 0.24, 1), visibility 0s linear 1000ms;
+  transition: clip-path 900ms cubic-bezier(0.76, 0, 0.24, 1), visibility 0s linear 900ms;
 }
 .menu[data-open] {
-  clip-path: circle(150vmax at var(--ox, 90%) var(--oy, 40px));
+  clip-path: circle(150vmax at var(--ox, 10%) var(--oy, 40px));
   visibility: visible;
-  transition: clip-path 1000ms cubic-bezier(0.76, 0, 0.24, 1), visibility 0s;
+  transition: clip-path 900ms cubic-bezier(0.76, 0, 0.24, 1), visibility 0s;
 }
-.menu__links { align-self: center; display: grid; justify-items: start; gap: 2px; }
+.menu__links { align-self: center; display: grid; justify-items: start; gap: 4px; }
 .menu__links a {
-  font: 400 clamp(40px, 6.4vw, 84px)/1.15 var(--font-display);
+  font: 400 clamp(36px, 8vw, 64px)/1.2 var(--font-display);
   color: var(--paper);
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 500ms var(--ease), transform 500ms var(--ease), color 300ms;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease), color 250ms;
 }
 .menu[data-open] .menu__links a {
   opacity: 1; transform: none;
-  transition: opacity 900ms var(--ease), transform 900ms var(--ease), color 300ms;
-  transition-delay: calc(260ms + var(--i) * 60ms);
+  transition: opacity 800ms var(--ease), transform 800ms var(--ease), color 250ms;
+  transition-delay: calc(240ms + var(--i) * 55ms);
 }
-.menu__links a:hover { color: var(--gold); }
-.menu__foot { display: flex; gap: 28px; font-size: 15px; opacity: 0; transition: opacity 600ms var(--ease); }
-.menu[data-open] .menu__foot { opacity: .85; transition-delay: 700ms; }
-.menu__foot a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.menu__links a:hover { color: var(--mark); }
 
-.menu__hand {
-  position: absolute; left: 0; bottom: 0;
-  width: min(60vw, 880px); height: auto; pointer-events: none;
-  transform: translateX(-100%);
-  transition: transform 900ms var(--ease);
+.menu__foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(243, 237, 228, 0.22);
+  opacity: 0; transition: opacity 500ms var(--ease);
 }
-.menu[data-open] .menu__hand { transform: translateX(-6%); transition: transform 1600ms var(--ease) 300ms; }
+.menu[data-open] .menu__foot { opacity: 1; transition-delay: 600ms; }
+.menu__give {
+  display: inline-flex; align-items: center; height: 52px; padding: 0 28px;
+  border-radius: 999px; background: var(--paper); color: var(--brick);
+  font-weight: 600;
+}
+.menu__orphan { font-weight: 500; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+.menu__small { flex-basis: 100%; display: flex; gap: 22px; font-size: 14px; opacity: 0.8; }
+.menu__small a:hover, .menu__orphan:hover { color: var(--mark); }
 
-@media (max-width: 640px) {
-  .bar__label { display: none; }
-  .menu { grid-template-rows: auto 1fr; align-content: start; padding-top: calc(var(--bar-h) + 40px); }
-  .menu__links { align-self: start; }
-  .menu__foot { position: relative; z-index: 1; margin-top: 36px; align-self: start; gap: 22px; }
-  .menu__hand { width: 120vw; }
-  .menu[data-open] .menu__hand { transform: translateX(-30%); }
+@media (prefers-reduced-motion: reduce) {
+  .bar, .bar__inner { transition: none; }
 }
