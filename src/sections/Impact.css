@@ -64,11 +64,30 @@
 /* grown, it only moves in the air */
 .im__sway { transform-box: view-box; transform-origin: 58px 190px; }
 .im__sway--small { transform-origin: 92px 190px; }
-.im__card[data-on] .im__sway { animation: im-sway 9s ease-in-out 3.6s infinite alternate; }
-.im__card[data-on] .im__sway--small { animation-duration: 7s; animation-delay: 4.2s; }
+/* grown, it sways from the root like a pendulum, right and left, light on its feet;
+   every swing starts and ends at rest, so nothing jumps when it begins */
+.im__card[data-on] .im__sway { animation: im-sway 4.4s cubic-bezier(0.45, 0, 0.55, 1) 3.4s infinite; }
+/* the small one is lighter, so it swings a little quicker and a little further */
+.im__card[data-on] .im__sway--small { animation-duration: 3.6s; animation-delay: 3.9s; animation-name: im-sway-small; }
 @keyframes im-sway {
-  from { rotate: -0.7deg; }
-  to { rotate: 0.8deg; }
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: 2.6deg; }
+  75% { rotate: -2.4deg; }
+}
+@keyframes im-sway-small {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -3.4deg; }
+  75% { rotate: 3deg; }
+}
+/* and each leaf follows a beat behind the stem, as leaves do in a breeze */
+.im__card[data-on] .im__leaf {
+  animation: im-leaf 4.4s cubic-bezier(0.45, 0, 0.55, 1) calc(3400ms + 280ms + var(--d) * 0.25) infinite;
+}
+.im__card[data-on] .im__sway--small .im__leaf { animation-duration: 3.6s; }
+@keyframes im-leaf {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: 4deg; }
+  75% { rotate: -3.5deg; }
 }
 
 @media (max-width: 600px) {
@@ -79,5 +98,5 @@
 @media (prefers-reduced-motion: reduce) {
   .im__stem { stroke-dashoffset: 0; transition: none; }
   .im__leaf, .im__bud { scale: 1; opacity: 1; transition: none; }
-  .im__card[data-on] .im__sway { animation: none; }
+  .im__card[data-on] .im__sway, .im__card[data-on] .im__leaf { animation: none; }
 }
