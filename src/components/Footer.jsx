@@ -92,6 +92,16 @@ function bars(seed) {
   })
 }
 
+// a small red heart that beats now and then
+function Heart() {
+  return (
+    <svg className="ft__heart" viewBox="0 0 24 22" aria-hidden="true">
+      <path d="M12 21.2c-.4 0-.8-.2-1.1-.4C6.5 17.6 1.5 13.4 1.5 8 1.5 4.6 4.1 2 7.3 2c2 0 3.7 1 4.7 2.6C13 3 14.7 2 16.7 2c3.2 0 5.8 2.6 5.8 6 0 5.4-5 9.6-9.4 12.8-.3.2-.7.4-1.1.4Z" />
+      <ellipse cx="7.4" cy="7.6" rx="2.3" ry="1.4" transform="rotate(-38 7.4 7.6)" />
+    </svg>
+  )
+}
+
 /*
  * The page ends the way the slip from the box ends: torn from the roll, and a thank-you.
  * Under it, everything a supporter may look for — the pages, the policies, the two
@@ -104,6 +114,7 @@ export default function Footer() {
         <div className="ft__close">
           <h2>
             شكرًا لأنك جزء من <Highlight tone="dark">الأثر</Highlight>
+            <Heart />
           </h2>
           <div className="ft__reach">
             <a className="ft__cta" href={`${SITE}/ar/projects`}>

@@ -23,6 +23,28 @@
   border-bottom: 1.5px dashed rgba(243, 237, 228, 0.3);
 }
 .ft__close h2 { font: 400 clamp(40px, 5.4vw, 84px)/1.12 var(--font-display); text-wrap: balance; }
+.ft__heart {
+  display: inline-block;
+  width: 0.7em; height: 0.7em;
+  margin-inline-start: 0.24em;
+  vertical-align: -0.08em;
+  overflow: visible;
+  rotate: -10deg;
+  transform-origin: 50% 60%;
+  animation: ft-beat 2.6s ease-in-out 1s infinite;
+}
+.ft__heart path { fill: #e8453c; }
+.ft__heart ellipse { fill: #fff; opacity: 0.55; }
+/* two quick beats, then a rest */
+@keyframes ft-beat {
+  0%, 36%, 100% { transform: scale(1); }
+  9% { transform: scale(1.16); }
+  18% { transform: scale(0.97); }
+  26% { transform: scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ft__heart { animation: none; }
+}
 .ft__reach { display: grid; justify-items: start; gap: 18px; }
 .ft__cta {
   display: inline-flex; align-items: center; height: 56px; padding: 0 32px;
