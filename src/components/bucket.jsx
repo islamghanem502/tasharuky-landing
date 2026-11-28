@@ -10,7 +10,7 @@ import Receipt from '@/components/Receipt'
  * The box is a receipt printer for impact. Everything runs off one clock:
  *   a coin falls and turns once → it goes in, light spills, the flaps answer →
  *   a receipt feeds out of the mouth in printer steps → a stamp lands: "موثّق",
- *   and the last line is ticked → the slip is torn off and drifts away → again,
+ *   and the last line is ticked → the slip fades away where it stands → again,
  *   with the next campaign and the next contribution number.
  */
 
@@ -28,8 +28,7 @@ const FALL = 2.9
 const PRINT = [3.3, 5.9]
 const FEED_STEPS = 15
 const STAMP = 6.5
-const TEAR = 8.7
-const FLY = [8.8, 10.2]
+const FADE = [8.6, 10.0] // the slip dissolves where it stands
 const PERIOD = 10.8
 
 // real campaigns and figures from tasharuky.com
@@ -134,36 +133,34 @@ const Bucket = ({ active = true }) => {
       // ── the receipt
       const hidden = size.slipH - (SLIP.foot - SLIP.hide) * unit // pushed down until its top sits under the lid edge
       let sy = hidden
-      let sx = 0
+      const sx = 0
       let rot = 0
       let op = 1
       if (t < PRINT[0]) op = 0
       else if (t < PRINT[1]) sy = hidden * (1 - feed((t - PRINT[0]) / (PRINT[1] - PRINT[0]), FEED_STEPS))
-      else if (t < FLY[0]) {
+      else if (t < FADE[1]) {
         sy = 0
         const since = t - PRINT[1]
         rot = 1.4 * Math.sin(2 * Math.PI * 0.32 * since) * clamp01(since / 0.9) // paper settling in the air
         const hit = t - STAMP - 0.16
         if (hit > 0 && hit < 0.32) sy += 4 * unit * Math.sin((Math.PI * hit) / 0.32) // the stamp presses it down
-        if (t > TEAR) sy -= 8 * unit * easeOut(clamp01((t - TEAR) / 0.1)) // torn: a short jerk up
-      } else if (t < FLY[1]) {
-        const q = easeInOut((t - FLY[0]) / (FLY[1] - FLY[0]))
-        sx = -0.26 * size.w * q
-        sy = -8 * unit - 0.75 * size.h * q
-        rot = -16 * q
-        op = 1 - Math.pow(q, 1.6)
+        if (t > FADE[0]) {
+          const q = easeInOut((t - FADE[0]) / (FADE[1] - FADE[0]))
+          sy -= 10 * unit * q // a breath upwards as it fades
+          op = 1 - q
+        }
       } else op = 0
       slip.current.style.opacity = op.toFixed(3)
       slip.current.style.transform = `translate3d(${sx.toFixed(2)}px, ${sy.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg)`
 
       // ── the stamp
       const s = clamp01((t - STAMP) / 0.16)
-      stamp.current.style.opacity = (t > STAMP && t < FLY[1] ? Math.min(1, s * 1.6) * 0.92 : 0).toFixed(3)
+      stamp.current.style.opacity = (t > STAMP && t < FADE[1] ? Math.min(1, s * 1.6) * 0.92 : 0).toFixed(3)
       stamp.current.style.transform = `scale(${(1.5 - 0.5 * s * s).toFixed(3)})`
-      done.current.toggleAttribute('data-done', t > STAMP + 0.16 && t < FLY[1])
+      done.current.toggleAttribute('data-done', t > STAMP + 0.16 && t < FADE[1])
 
       // ── the flaps answer the coin, and the tear
-      const a = ring(tau, 8) + ring(t - TEAR, 4)
+      const a = ring(tau, 8)
       flapR.current.style.transform = `rotate(${a.toFixed(3)}deg)`
       flapL.current.style.transform = `rotate(${(-a).toFixed(3)}deg)`
 
