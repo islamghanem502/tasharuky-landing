@@ -1,4 +1,5 @@
 import Orbit from '../components/Orbit'
+import Highlight from '../components/Highlight'
 import './Hero.css'
 
 const SITE = 'https://tasharuky.com'
@@ -14,7 +15,9 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero__text">
-        <h1>نعزز أثر العطاء الإنساني ونبني جسور الثقة</h1>
+        <h1>
+          نعزز أثر العطاء الإنساني ونبني <Highlight delay={500}>جسور الثقة</Highlight>
+        </h1>
         <p>نعمل على دعم المجتمعات من خلال مبادرات إنسانية وتنموية تسهم في تحسين جودة الحياة وتعزيز الاستقرار المجتمعي.</p>
         <div className="hero__actions">
           <a className="cta" href={`${SITE}/ar/projects`}>اكتشف المشاريع</a>

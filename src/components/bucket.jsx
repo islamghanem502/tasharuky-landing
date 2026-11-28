@@ -134,14 +134,12 @@ const Bucket = ({ active = true }) => {
       const hidden = size.slipH - (SLIP.foot - SLIP.hide) * unit // pushed down until its top sits under the lid edge
       let sy = hidden
       const sx = 0
-      let rot = 0
+      const rot = 0
       let op = 1
       if (t < PRINT[0]) op = 0
       else if (t < PRINT[1]) sy = hidden * (1 - feed((t - PRINT[0]) / (PRINT[1] - PRINT[0]), FEED_STEPS))
       else if (t < FADE[1]) {
         sy = 0
-        const since = t - PRINT[1]
-        rot = 1.4 * Math.sin(2 * Math.PI * 0.32 * since) * clamp01(since / 0.9) // paper settling in the air
         const hit = t - STAMP - 0.16
         if (hit > 0 && hit < 0.32) sy += 4 * unit * Math.sin((Math.PI * hit) / 0.32) // the stamp presses it down
         if (t > FADE[0]) {

@@ -1,0 +1,119 @@
+.cp {
+  padding: clamp(96px, 11vw, 160px) var(--gutter);
+  max-width: 1440px;
+  margin-inline: auto;
+}
+.cp__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: end;
+  gap: 24px 64px;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+.cp__head h2 { font: 400 clamp(36px, 4.2vw, 64px)/1.18 var(--font-display); color: var(--ink); text-wrap: balance; }
+.cp__head p { font-size: 18px; line-height: 1.85; color: var(--muted); max-width: 28em; text-wrap: pretty; }
+
+.cp__list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+
+.cp__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1.25fr) minmax(0, 1.2fr) minmax(0, 1fr) 128px;
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  transition: background-color 500ms var(--ease);
+}
+/* the whole row is the link; a stretched anchor keeps it one tab stop */
+.cp__link { position: absolute; inset: 0; z-index: 2; border-radius: 4px; }
+
+.cp__photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 1100ms var(--ease);
+}
+
+.cp__sector { font-size: 13px; color: var(--muted); }
+.cp__what h3 { font: 400 clamp(24px, 2.2vw, 32px)/1.2 var(--font-display); color: var(--ink); margin-top: 2px; }
+.cp__what p { font-size: 15px; color: var(--muted); margin-top: 4px; }
+
+.cp__mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.cp__nums { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 4px 28px; margin: 0; }
+.cp__nums div { display: grid; }
+.cp__nums dt { font-size: 13px; color: var(--muted); }
+.cp__nums dd { margin: 0; font-size: 17px; color: var(--ink); text-align: right; }
+.cp__nums div:first-child dd { color: var(--brick); }
+
+.cp__bar { display: flex; align-items: center; gap: 14px; }
+.cp__bar > span { font-size: 15px; color: var(--ink); min-width: 3.6em; }
+.cp__progress { --progress-dir: 1; height: 4px; background: var(--line); border-radius: 4px; }
+.cp__indicator { background: var(--teal); transition: transform 1600ms var(--ease) calc(var(--i) * 120ms + 150ms); }
+
+.cp__cta {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--brick);
+  color: var(--paper);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 400ms var(--ease), transform 500ms var(--ease);
+}
+
+@media (hover: hover) {
+  .cp__row:hover { background: color-mix(in srgb, var(--sand) 35%, transparent); }
+  .cp__row:hover .cp__photo { filter: none; }
+  .cp__row:hover .cp__cta,
+  .cp__link:focus-visible ~ .cp__cta { opacity: 1; transform: none; }
+}
+/* on touch screens the colour comes in as the row arrives, and the action is always there */
+@media (hover: none) {
+  .cp__row[data-seen] .cp__photo { filter: none; }
+  .cp__cta { opacity: 1; transform: none; }
+}
+
+.cp__all { display: inline-block; margin-top: 32px; }
+
+@media (max-width: 1100px) {
+  .cp__row {
+    grid-template-columns: 80px minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "photo what what"
+      "nums nums bar"
+      "cta cta cta";
+    row-gap: 18px;
+  }
+  .cp__photo { grid-area: photo; width: 80px; height: 80px; }
+  .cp__what { grid-area: what; }
+  .cp__nums { grid-area: nums; }
+  .cp__bar { grid-area: bar; }
+  .cp__cta { grid-area: cta; justify-self: start; opacity: 1; transform: none; }
+}
+@media (max-width: 720px) {
+  .cp__head { grid-template-columns: 1fr; }
+  .cp__head p { font-size: 17px; }
+  .cp__row {
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-areas:
+      "photo what"
+      "nums nums"
+      "bar bar"
+      "cta cta";
+    padding: 24px 0;
+  }
+  .cp__photo { width: 64px; height: 64px; }
+  .cp__nums { gap: 4px 22px; }
+  .cp__nums dd { font-size: 16px; }
+}

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './sections/Hero'
 import Give from './sections/Give'
+import Campaigns from './sections/Campaigns'
 
 function Home() {
   return (
@@ -10,6 +11,7 @@ function Home() {
       <main>
         <Hero />
         <Give />
+        <Campaigns />
       </main>
     </>
   )
