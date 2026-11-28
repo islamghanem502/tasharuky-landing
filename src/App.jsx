@@ -7,7 +7,6 @@ import About from './sections/About'
 import Notice from './sections/Notice'
 import Impact from './sections/Impact'
 import Footer from './components/Footer'
-import Khairy from './components/Khairy'
 
 function Home() {
   return (
@@ -22,7 +21,6 @@ function Home() {
         <Impact />
       </main>
       <Footer />
-      <Khairy />
     </>
   )
 }
