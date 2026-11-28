@@ -126,8 +126,8 @@
 .fd__cta:hover { background: var(--brick-deep); }
 .fd[data-open] .fd__cta, .fd__cta:focus-visible { opacity: 1; transform: none; }
 
-.cp__more { max-width: 1440px; margin: clamp(96px, 10vw, 150px) auto 0; container-type: inline-size; }
-.cp__more h3 { font: 400 clamp(28px, 3vw, 44px)/1.2 var(--font-display); margin-bottom: clamp(20px, 2.4vw, 32px); }
+.cp__more { max-width: 1280px; margin: clamp(80px, 9vw, 136px) auto 0; container-type: inline-size; }
+.cp__more h3 { font: 400 clamp(28px, 2.8vw, 40px)/1.2 var(--font-display); margin-bottom: clamp(18px, 2vw, 28px); }
 
 .cp__all {
   display: block; width: fit-content; margin: clamp(40px, 5vw, 64px) auto 0;
