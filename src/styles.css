@@ -15,6 +15,7 @@
   --gold: #e3a83f;
   --gold-deep: #b9832b;
   --mark: #f3c75a; /* the highlighter */
+  --underline: #ef8a6f; /* the brush underline */
 
   --font-display: 'Lalezar', system-ui, sans-serif;
   --font-body: 'Alexandria Variable', 'Alexandria', system-ui, sans-serif;

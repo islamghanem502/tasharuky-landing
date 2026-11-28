@@ -1,7 +1,7 @@
 import { useInView } from 'motion/react'
 import { useRef } from 'react'
 import Bucket from '@/components/bucket'
-import Highlight from '@/components/Highlight'
+import Underline from '@/components/Underline'
 import './Give.css'
 
 const SITE = 'https://tasharuky.com'
@@ -14,7 +14,7 @@ export default function Give() {
     <section className="give">
       <div className="give__text">
         <h2>
-          مساهمتك <Highlight>لا تختفي</Highlight> في الصندوق
+          مساهمتك <Underline>لا تختفي</Underline> في الصندوق
         </h2>
         <p>من لحظة إطلاق المشروع وحتى اكتمال تنفيذه، نتابع مراحل العمل ونشارك المستجدات والنتائج؛ ليبقى الداعم قريبًا من مسار الأثر.</p>
         <a className="cta" href={`${SITE}/ar/projects`}>ابدأ مساهمتك</a>

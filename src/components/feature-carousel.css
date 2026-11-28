@@ -49,7 +49,12 @@
   display: flex; align-items: center; justify-content: center;
   padding: 48px 24px;
   overflow: hidden;
+  touch-action: pan-y; /* vertical scrolling stays with the page; sideways moves the stack */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
 }
+.fc__stage[data-dragging] { cursor: grabbing; }
 .fc__stack { position: relative; width: 100%; max-width: 400px; aspect-ratio: 4 / 5; }
 
 .fc__card {
@@ -61,14 +66,14 @@
   transform-origin: center;
   cursor: pointer;
   color: var(--paper);
+  will-change: transform, opacity;
 }
 .fc__card.is-active { cursor: default; }
 .fc__img {
   display: block; width: 100%; height: 100%; object-fit: cover;
-  transition: filter 150ms ease-out;
-  filter: grayscale(1) blur(2px) brightness(0.75);
+  pointer-events: none;
 }
-.fc__card.is-active .fc__img { filter: none; }
+.fc__card:not(.is-active) .fc__foot { pointer-events: none; }
 
 .fc__sector {
   position: absolute; top: 16px; right: 16px;
@@ -82,6 +87,7 @@
   position: absolute; inset: auto 0 0;
   display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
   padding: 120px 24px 22px;
+  will-change: opacity, transform;
   background: linear-gradient(to top, rgba(10, 34, 33, 0.96) 0%, rgba(10, 34, 33, 0.8) 42%, rgba(10, 34, 33, 0) 100%);
 }
 .fc__foot h4 { font: 400 28px/1.15 var(--font-display); }

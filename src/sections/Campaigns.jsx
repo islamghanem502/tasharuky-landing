@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import Highlight from '@/components/Highlight'
+import Underline from '@/components/Underline'
 import { Progress } from '@/components/ui/progress'
 import FeatureCarousel from '@/components/feature-carousel'
 import { FEATURED, MORE, money } from '@/data/campaigns'
@@ -112,15 +113,28 @@ export default function Campaigns() {
   const grid = useRef(null)
 
   useEffect(() => {
-    const items = [...grid.current.children]
+    const row = grid.current
+    const items = [...row.children]
+    const phone = window.matchMedia('(max-width: 680px)').matches
     const touch = window.matchMedia('(hover: none)').matches
-    // on touch screens, the folder in the middle of the screen opens by itself
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setOpen(touch ? items.indexOf(e.target) : (o) => (o === null ? first : o))
-      },
-      touch ? { rootMargin: '-45% 0px -45% 0px' } : { threshold: 0.6 },
-    )
+    let io
+    if (phone) {
+      // phones: the folders sit in a row you swipe through; the one in the middle opens
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) if (e.isIntersecting) setOpen(items.indexOf(e.target))
+        },
+        { root: row, rootMargin: '0px -42% 0px -42%' },
+      )
+    } else {
+      // larger touch screens: the folder in the middle of the screen; mouse: the closest to its goal
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) if (e.isIntersecting) setOpen(touch ? items.indexOf(e.target) : (o) => (o === null ? first : o))
+        },
+        touch ? { rootMargin: '-45% 0px -45% 0px' } : { threshold: 0.6 },
+      )
+    }
     items.forEach((el) => io.observe(el))
     return () => io.disconnect()
   }, [first])
@@ -129,7 +143,7 @@ export default function Campaigns() {
     <section className="cp" id="projects">
       <header className="cp__head">
         <h2>
-          ملفات مفتوحة <Highlight tone="dark">تنتظر من يُكملها</Highlight>
+          ملفات مفتوحة <Underline>تنتظر من يُكملها</Underline>
         </h2>
         <p>كل حملة ملف موثّق: صور من الميدان، وما تم جمعه، وما تبقّى للوصول إلى الهدف. افتح الملف، وكن من يُكمله.</p>
       </header>
@@ -141,7 +155,9 @@ export default function Campaigns() {
       </div>
 
       <div className="cp__more">
-        <h3>حملات أخرى تحتاجك</h3>
+        <h3>
+          حملات أخرى <Highlight tone="dark">تحتاجك</Highlight>
+        </h3>
         <FeatureCarousel items={MORE} />
       </div>
 

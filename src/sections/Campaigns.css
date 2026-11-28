@@ -141,5 +141,19 @@
 @media (max-width: 680px) {
   .cp__head { grid-template-columns: 1fr; }
   .cp__head p { font-size: 17px; }
-  .cp__grid { grid-template-columns: 1fr; row-gap: 30vw; padding-top: 30%; }
+  /* a row of folders you swipe through, the next one peeking in */
+  .cp__grid {
+    display: flex; gap: 14px;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 30vw var(--gutter) 24px;
+    scroll-padding-inline: var(--gutter);
+  }
+  .cp__grid::-webkit-scrollbar { display: none; }
+  .fd { flex: none; width: 74vw; aspect-ratio: 5 / 5.3; scroll-snap-align: center; }
+  .fd__sector, .fd__front > p:not(.fd__left), .fd__left { font-size: 4.2cqw; }
+  .fd__bar span { font-size: 4.2cqw; }
+  .fd__front { padding: 5.4cqw 6cqw; }
+  .fd__cta { height: 11cqw; font-size: 4.2cqw; }
 }
