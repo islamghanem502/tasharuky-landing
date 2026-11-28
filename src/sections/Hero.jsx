@@ -4,11 +4,13 @@ import './Hero.css'
 
 const SITE = 'https://tasharuky.com'
 
-// each case: the same moment, before and after support reaches it
+// field photographs from Tasharuky's own campaigns
 const CASES = [
-  { before: '/hero/boy-before.webp', after: '/hero/boy-after.webp', pos: '50% 38%', label: 'طفل حزين يبتسم من جديد' },
-  { before: '/hero/street-before.webp', after: '/hero/street-after.webp', pos: '46% 64%', label: 'أب يدفع عربة يجلس عليها طفله فوق عبوات الماء بين الأنقاض' },
-  { before: '/hero/water-before.webp', after: '/hero/water-after.webp', pos: '50% 46%', label: 'طفل يحمل كوبًا من الماء النظيف' },
+  { src: '/field/hat.webp', label: 'طفلتان تبتسمان في مخيم للنازحين' },
+  { src: '/field/water.webp', label: 'طفل يحمل لافتة مشروع سقيا الماء' },
+  { src: '/field/girls.webp', label: 'أطفال يلوّحون بفرح بعد توزيع المساعدات' },
+  { src: '/field/quran.webp', label: 'طفل في حلقة تحفيظ القرآن' },
+  { src: '/field/aid.webp', label: 'متطوعون يوزّعون المساعدات' },
 ]
 
 export default function Hero() {

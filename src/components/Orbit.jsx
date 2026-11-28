@@ -6,7 +6,7 @@ import './Orbit.css'
  * One case sits large in the centre; the others wait as small circles on an orbit
  * that turns very slowly. Each turn, the next case travels in and grows, the queue
  * slides one place along the arc, and the old one shrinks back out to the end of it.
- * A case arrives in black and white and only then takes on its colour.
+ * A photo arrives in black and white and only then takes on its colour.
  */
 
 const HOLD = 7200          // time a case stays in the centre
@@ -104,9 +104,9 @@ export default function Orbit({ cases }) {
     <div className="orbit" ref={stage} role="img" aria-label={cases.map((c) => c.label).join('، ')}>
       <span className="orbit__track" aria-hidden="true" />
       {cases.map((c, i) => (
-        <div key={c.after} className="orbit__item" ref={(el) => (els.current[i] = el)} aria-hidden="true">
-          <img src={c.before} alt="" style={{ objectPosition: c.pos }} draggable="false" />
-          <img src={c.after} alt="" className="orbit__lit" style={{ objectPosition: c.pos }} draggable="false" />
+        <div key={c.src} className="orbit__item" ref={(el) => (els.current[i] = el)} aria-hidden="true">
+          <img src={c.src} alt="" className="orbit__dim" draggable="false" />
+          <img src={c.src} alt="" className="orbit__lit" draggable="false" />
         </div>
       ))}
     </div>
