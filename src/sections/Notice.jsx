@@ -39,6 +39,7 @@ const tear = (seed) => {
  * The call to act, as a notice pinned to a wall: a photocopied flyer taped up in the
  * street, its foot cut into slips — one for each sector. Take the slip nearest to you
  * and it opens that sector's campaigns. Two slips are already torn away.
+ * The photocopy look is baked into the image, so the page only draws flat paper.
  */
 export default function Notice() {
   const sheet = useRef(null)
@@ -70,7 +71,8 @@ export default function Notice() {
           </div>
 
           <figure className="nt__photo" aria-hidden="true">
-            <img src="/campaigns/safety.webp" alt="" loading="lazy" />
+            <img src="/notice/photocopy.webp" alt="" loading="lazy" decoding="async" width="600" height="800" />
+            <figcaption>من الميدان</figcaption>
           </figure>
         </div>
 
@@ -91,6 +93,11 @@ export default function Notice() {
                   {s.no}
                 </span>
                 <span className="nt__name">{s.name}</span>
+                <span className="nt__go" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 3v10M4 9l4 4 4-4" />
+                  </svg>
+                </span>
               </a>
             )
           })}

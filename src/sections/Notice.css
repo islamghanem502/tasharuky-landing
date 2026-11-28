@@ -1,93 +1,87 @@
-/* ── the call to act: a flyer taped to a brick wall ─────────── */
+/* ── the call to act: a flyer taped to a brick wall ─────────────
+   Kept cheap to draw: flat paper with box-shadows (no filters, no SVG textures, no
+   blend modes), and only transform and opacity ever animate. */
 .nt {
   --sheet: #fbf9f4;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   position: relative;
-  padding: clamp(96px, 10vw, 156px) var(--gutter) clamp(88px, 9vw, 140px);
+  padding: clamp(88px, 10vw, 152px) var(--gutter) clamp(80px, 9vw, 136px);
   background:
-    /* a painted wall: a little tooth, and light falling from above */
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.12)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E"),
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 60%),
+    linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.14)),
     var(--brick);
   overflow: hidden;
 }
 
-/* the sheet and its slips share one shadow, so the wall shows between the slips */
 .nt__sheet {
   position: relative;
-  max-width: 1060px;
+  max-width: 1040px;
   margin-inline: auto;
-  filter: drop-shadow(0 1px 1px rgba(60, 14, 8, 0.25)) drop-shadow(0 26px 28px rgba(60, 14, 8, 0.32));
-  rotate: -1deg;
+  rotate: -0.8deg;
   opacity: 0;
-  translate: 0 48px;
-  transform-origin: 50% 0;
-  transition: opacity 900ms var(--ease), translate 1300ms var(--ease), rotate 1600ms var(--ease);
+  transform: translateY(40px);
+  transition: opacity 800ms var(--ease), transform 1100ms var(--ease);
 }
-.nt__sheet[data-on] { opacity: 1; translate: 0 0; }
-.nt__sheet:not([data-on]) { rotate: -4deg; }
+.nt__sheet[data-on] { opacity: 1; transform: none; }
 
 .nt__body,
 .nt__cut,
-.nt__slip { background: var(--grain), var(--sheet); color: var(--ink); }
+.nt__slip { background-color: var(--sheet); color: var(--ink); }
 
+/* every piece of paper carries its own shadow */
 .nt__body {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(28px, 4vw, 64px);
-  padding: clamp(40px, 5vw, 72px) clamp(28px, 5vw, 72px) clamp(28px, 3vw, 44px);
+  gap: clamp(28px, 4vw, 60px);
+  padding: clamp(40px, 5vw, 68px) clamp(28px, 5vw, 68px) clamp(28px, 3vw, 40px);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 1px 1px rgba(60, 14, 8, 0.18), 0 24px 44px -22px rgba(60, 14, 8, 0.6);
 }
 .nt__tag {
-  display: inline-block;
-  padding: 7px 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px;
   border: 1.5px solid currentColor;
   border-radius: 999px;
   color: var(--brick);
   font-size: 14px; font-weight: 500; line-height: 1;
 }
+.nt__tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .nt__text h2 {
-  margin-top: 22px;
-  font: 400 clamp(40px, 5vw, 76px)/1.14 var(--font-display);
+  margin-top: 20px;
+  font: 400 clamp(38px, 4.8vw, 72px)/1.14 var(--font-display);
   text-wrap: balance;
 }
 .nt__text > p:not(.nt__tag) {
-  margin-top: 20px; max-width: 30em;
+  margin-top: 18px; max-width: 30em;
   font-size: 18px; line-height: 1.85; color: var(--muted);
   text-wrap: pretty;
 }
-.nt__actions { margin-top: 34px; display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; }
+.nt__actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
 
-/* the photo, as a photocopy prints it: grey, hard, a little dotted */
-.nt__photo {
-  position: relative;
-  margin: 0;
-  aspect-ratio: 4 / 5;
-  max-height: 440px;
-  width: 100%;
-  overflow: hidden;
-  background: #dcd6cb;
-}
+/* the photo is printed on the flyer, photocopy and all (baked into the image) */
+.nt__photo { margin: 0; }
 .nt__photo img {
-  width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(1) contrast(1.6) brightness(1.1);
-  mix-blend-mode: multiply;
+  display: block;
+  width: 100%; height: auto;
+  aspect-ratio: 4 / 5;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: 50% 55%;
 }
-.nt__photo::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle, rgba(30, 26, 23, 0.5) 0.8px, transparent 1.2px) 0 0 / 4px 4px;
-  box-shadow: inset 0 0 40px rgba(30, 26, 23, 0.35);
-  mix-blend-mode: multiply;
-  opacity: 0.55;
-}
+.nt__photo figcaption { margin-top: 10px; font-size: 12px; color: var(--muted); }
 
-/* where the slips begin: a dashed line, and the scissors */
-.nt__cut { position: relative; height: 26px; border-bottom: 1.5px dashed rgba(30, 26, 23, 0.42); }
+/* where the slips begin: the fold, and the scissors */
+.nt__cut { position: relative; height: 22px; }
+.nt__cut::after {
+  content: '';
+  position: absolute; inset: auto 0 0;
+  border-bottom: 1.5px dashed rgba(30, 26, 23, 0.4);
+}
 .nt__cut svg {
-  position: absolute; right: 22px; bottom: -16px;
-  width: 32px; height: 32px; padding: 3px;
+  position: absolute; z-index: 1; right: 22px; bottom: -15px;
+  width: 30px; height: 30px; padding: 3px;
   background: var(--sheet);
+  border-radius: 50%;
   color: var(--ink);
   transform: scaleX(-1); /* the blades point along the line, the way it is read */
 }
@@ -98,62 +92,80 @@
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  height: clamp(156px, 15vw, 196px);
+  height: clamp(150px, 14.5vw, 188px);
   display: flex; flex-direction: column; align-items: center; gap: 12px;
-  padding: 14px 0 16px;
+  padding: 16px 0 14px;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 1px 1px rgba(60, 14, 8, 0.16), 0 14px 22px -12px rgba(60, 14, 8, 0.5);
+  /* the holes it was punched along */
+  background-image: radial-gradient(circle, rgba(30, 26, 23, 0.22) 1.1px, transparent 1.6px);
+  background-size: 7px 7px;
+  background-position: 50% 3px;
+  background-repeat: repeat-x;
   transform-origin: 50% 0;
-  transition: transform 500ms var(--ease), color 300ms ease;
+  transition: transform 450ms var(--ease), color 250ms ease;
   -webkit-tap-highlight-color: transparent;
 }
-.nt__no { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; opacity: 0.55; }
+.nt__no { font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; opacity: 0.5; margin-top: 4px; }
 .nt__name {
   writing-mode: vertical-rl;
   white-space: nowrap;
-  font: 400 clamp(15px, 1.45vw, 19px)/1 var(--font-display);
+  font: 400 clamp(15px, 1.4vw, 18px)/1 var(--font-display);
 }
+.nt__go {
+  margin-top: auto;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--brick); color: var(--paper);
+  opacity: 0; transform: translateY(-4px) scale(0.7);
+  transition: opacity 250ms ease, transform 350ms var(--ease);
+}
+.nt__go svg { width: 12px; height: 12px; }
 /* pulled at: it gives a little from the top, as paper does */
 .nt__slip:not(.nt__slip--gone):hover,
-.nt__slip:focus-visible { z-index: 1; transform: rotate(-4deg) translateY(6px); color: var(--brick); }
-.nt__slip:focus-visible { outline-offset: -6px; }
-.nt__slip--gone { height: 44px; }
-
-/* a breath of air when the flyer comes into view */
-.nt__sheet[data-on] .nt__slip:not(.nt__slip--gone) { animation: nt-sway 2000ms var(--ease) calc(700ms + var(--i) * 70ms) both; }
-@keyframes nt-sway {
-  0% { rotate: 0deg; }
-  22% { rotate: 3deg; }
-  50% { rotate: -1.8deg; }
-  76% { rotate: 0.7deg; }
-  100% { rotate: 0deg; }
-}
+.nt__slip:focus-visible { z-index: 1; transform: rotate(-3.5deg) translateY(5px); color: var(--brick); }
+.nt__slip:hover .nt__go,
+.nt__slip:focus-visible .nt__go { opacity: 1; transform: none; }
+.nt__slip:focus-visible { outline-offset: -5px; }
+.nt__slip:not(.nt__slip--gone):active { transform: rotate(-5deg) translateY(9px); }
+.nt__slip--gone { height: 40px; box-shadow: none; background-image: none; }
 
 /* the tape holding it up */
 .nt__tape {
-  position: absolute; z-index: 2; top: -18px;
-  width: clamp(96px, 12vw, 140px); height: 38px;
-  background: linear-gradient(100deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 40%), rgba(232, 222, 200, 0.82);
+  position: absolute; z-index: 2; top: -17px;
+  width: clamp(92px, 11vw, 132px); height: 36px;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%), rgba(233, 223, 202, 0.86);
   clip-path: polygon(0 4%, 100% 0, 97% 22%, 100% 44%, 96% 66%, 100% 86%, 98% 100%, 2% 96%, 4% 76%, 0 56%, 3% 36%, 0 18%);
 }
-.nt__tape--r { right: 9%; rotate: 6deg; }
-.nt__tape--l { left: 8%; rotate: -8deg; }
+.nt__tape--r { right: 9%; rotate: 5deg; }
+.nt__tape--l { left: 8%; rotate: -7deg; }
 
+/* tablets: the photo goes above the words, as a wide strip */
 @media (max-width: 860px) {
-  .nt__body { grid-template-columns: 1fr; padding-top: 28px; }
-  .nt__photo { order: -1; aspect-ratio: 16 / 9; max-height: none; }
-  .nt__text h2 { margin-top: 18px; }
+  .nt__body { grid-template-columns: 1fr; padding-top: 28px; gap: 24px; }
+  .nt__photo { order: -1; }
+  .nt__photo img { aspect-ratio: 16 / 9; max-height: none; object-position: 50% 58%; }
   .nt__text > p:not(.nt__tag) { font-size: 17px; }
 }
-@media (max-width: 560px) {
-  .nt__sheet { rotate: -0.6deg; }
-  .nt__body { padding-inline: 22px; }
+/* phones: the torn stubs step out, so the eight slips that remain are wide enough to read */
+@media (max-width: 600px) {
+  .nt__sheet { rotate: -0.5deg; }
+  .nt__body { padding: 22px 20px 26px; }
+  .nt__photo figcaption { display: none; }
+  .nt__text h2 { margin-top: 16px; }
+  .nt__actions { margin-top: 26px; }
+  .nt__slip--gone { display: none; }
   .nt__slips { gap: 2px; }
-  .nt__slip { height: 168px; padding-top: 12px; gap: 9px; }
-  .nt__name { font-size: 14px; }
-  .nt__no { font-size: 9px; }
-  .nt__slip--gone { height: 34px; }
+  .nt__slip { height: 168px; padding-top: 14px; gap: 10px; }
+  .nt__name { font-size: 15px; }
+  .nt__no { font-size: 10px; }
+  .nt__go { display: none; }
+  .nt__tape { height: 30px; top: -14px; }
+}
+@media (max-width: 360px) {
+  .nt__name { font-size: 13.5px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nt__sheet { opacity: 1; translate: none; transition: none; }
-  .nt__sheet:not([data-on]) { rotate: -1deg; }
-  .nt__sheet[data-on] .nt__slip:not(.nt__slip--gone) { animation: none; }
+  .nt__sheet { opacity: 1; transform: none; transition: none; }
 }
