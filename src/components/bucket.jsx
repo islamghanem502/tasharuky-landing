@@ -123,7 +123,8 @@ const Bucket = ({ active = true }) => {
     let shown = 0
 
     const frame = (now) => {
-      clock += Math.min(now - last, 50) / 1000
+      // a frame's timestamp can fall just before the moment the loop woke: never run the clock backwards
+      clock += Math.max(0, Math.min(now - last, 50)) / 1000
       last = now
       const n = Math.floor(clock / PERIOD)
       if (n !== shown) {
@@ -269,7 +270,7 @@ const Bucket = ({ active = true }) => {
               rootRef={slip}
               stampRef={stamp}
               doneRef={done}
-              campaign={CAMPAIGNS[cycle % CAMPAIGNS.length]}
+              campaign={CAMPAIGNS[((cycle % CAMPAIGNS.length) + CAMPAIGNS.length) % CAMPAIGNS.length]}
               no={FIRST_NO + cycle}
               date={date}
             />
