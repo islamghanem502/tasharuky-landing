@@ -43,7 +43,7 @@ export default function Orbit({ cases }) {
     }
 
     const frame = (now) => {
-      const dt = Math.min(now - s.last, 64)
+      const dt = Math.max(0, Math.min(now - s.last, 64)) // never backwards, if a frame is stamped before the wake
       s.last = now
       if (!reduce) s.clock += dt
 
