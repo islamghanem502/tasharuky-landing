@@ -1,0 +1,207 @@
+/* ── خيري: the helper in the corner ──────────────────────────
+   Drawn from the site's own tokens: paper for the panel, ink for words, teal for him,
+   brick for what you say. Only transform and opacity animate. */
+.eyeball { display: inline-block; flex: none; line-height: 0; }
+.eyeball svg { display: block; overflow: visible; }
+
+.kh {
+  --kh-panel: #fbf9f4;
+  --kh-his: #efe8dc; /* his bubbles: a shade of the paper */
+  --kh-edge: 20px;
+  position: fixed;
+  z-index: 50; /* under the bar and its menu */
+  left: var(--kh-edge);
+  bottom: var(--kh-edge);
+  font-family: var(--font-body);
+}
+
+/* ── the launcher: him, floating a little ─────────────────── */
+.kh__launch {
+  position: relative;
+  display: grid; place-items: center;
+  width: 76px; height: 80px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.kh__launch .eyeball { position: relative; z-index: 1; animation: kh-float 3.6s ease-in-out infinite; }
+/* his shadow on the page, smaller when he is higher */
+.kh__launch::after {
+  content: '';
+  position: absolute; left: 50%; bottom: 2px;
+  width: 44px; height: 9px; margin-left: -22px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(30, 26, 23, 0.32), rgba(30, 26, 23, 0));
+  animation: kh-shadow 3.6s ease-in-out infinite;
+}
+.kh__launch:hover .eyeball { animation-play-state: paused; }
+.kh__launch:active .eyeball { transform: scale(0.94); }
+.kh__launch:focus-visible { outline: 2px solid var(--brick); outline-offset: 2px; border-radius: 50%; }
+@keyframes kh-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+@keyframes kh-shadow {
+  0%, 100% { scale: 1; opacity: 1; }
+  50% { scale: 0.82; opacity: 0.7; }
+}
+
+/* the hello, typed into a bubble beside him */
+.kh__hello {
+  position: absolute; left: 78px; bottom: 34px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  border-end-end-radius: 4px; /* pointing down at him, on his side */
+  background: var(--kh-panel);
+  color: var(--ink);
+  font: 500 14px/1.4 var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -14px rgba(30, 26, 23, 0.45);
+  animation: kh-pop 360ms cubic-bezier(0.34, 1.45, 0.64, 1);
+  transform-origin: 0 100%;
+}
+@keyframes kh-pop {
+  from { opacity: 0; transform: scale(0.7); }
+}
+
+/* ── the panel ─────────────────────────────────────────────── */
+.kh__panel {
+  position: absolute; left: 0; bottom: 88px;
+  width: min(384px, calc(100vw - 2 * var(--kh-edge)));
+  max-height: min(600px, calc(100svh - 190px));
+  display: flex; flex-direction: column;
+  background: var(--kh-panel);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  box-shadow: 0 2px 4px rgba(30, 26, 23, 0.05), 0 30px 60px -26px rgba(30, 26, 23, 0.45);
+  overflow: hidden;
+  transform-origin: 30px 100%;
+  opacity: 0; transform: translateY(12px) scale(0.92);
+  visibility: hidden;
+  transition: opacity 260ms ease, transform 420ms cubic-bezier(0.34, 1.3, 0.64, 1), visibility 0s linear 420ms;
+}
+.kh[data-open] .kh__panel {
+  opacity: 1; transform: none; visibility: visible;
+  transition: opacity 260ms ease, transform 420ms cubic-bezier(0.34, 1.3, 0.64, 1), visibility 0s;
+}
+
+.kh__head {
+  flex: none;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px 12px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.kh__head .eyeball { margin-top: 6px; } /* room for his sprout */
+.kh__who { flex: 1; display: grid; line-height: 1.3; }
+.kh__who b { font: 400 21px/1.2 var(--font-display); color: var(--ink); }
+.kh__who span { font-size: 12.5px; color: var(--muted); }
+.kh__close {
+  flex: none; display: grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 0; background: rgba(30, 26, 23, 0.06); color: var(--ink); cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.kh__close:hover { background: rgba(30, 26, 23, 0.12); }
+.kh__close svg { width: 14px; height: 14px; }
+
+/* the conversation */
+.kh__log {
+  flex: 1 1 auto; min-height: 120px;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 16px 16px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin;
+}
+.kh__msg {
+  max-width: 86%;
+  padding: 11px 14px;
+  font-size: 14.5px; line-height: 1.75;
+  animation: kh-in 300ms var(--ease);
+}
+@keyframes kh-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+/* his, on the reading side, as in any chat read right to left */
+.kh__msg--kh {
+  align-self: flex-start;
+  background: var(--kh-his); color: var(--ink);
+  border-radius: 18px;
+  border-start-start-radius: 6px; /* the corner nearest him */
+}
+.kh__msg--me {
+  align-self: flex-end;
+  background: var(--brick); color: var(--paper);
+  border-radius: 18px;
+  border-start-end-radius: 6px;
+}
+.kh__msg p { text-wrap: pretty; }
+.kh__link {
+  margin-top: 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--kh-panel); color: var(--teal);
+  font-size: 13.5px; font-weight: 600;
+  transition: background-color 200ms ease, color 200ms ease, gap 250ms var(--ease);
+}
+.kh__link:hover { background: var(--teal); color: var(--paper); gap: 11px; }
+.kh__link svg { width: 14px; height: 14px; }
+
+/* "…" while he thinks */
+.kh__dots { display: inline-flex; gap: 5px; padding: 15px 16px; }
+.kh__dots i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--muted);
+  animation: kh-dot 1s ease-in-out infinite;
+}
+.kh__dots i:nth-child(2) { animation-delay: 0.15s; }
+.kh__dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes kh-dot {
+  0%, 60%, 100% { opacity: 0.3; transform: none; }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* the questions he knows */
+.kh__ask {
+  flex: none;
+  max-height: 40%;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 10px 16px 16px;
+  border-top: 1px solid var(--line);
+  scrollbar-width: thin;
+}
+.kh__ask p { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+.kh__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.kh__chip {
+  padding: 7px 13px;
+  border: 1px solid rgba(46, 140, 138, 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--teal);
+  font: 500 13.5px/1.4 var(--font-body);
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, opacity 200ms ease;
+}
+.kh__chip:hover:not(:disabled) { background: var(--teal); border-color: var(--teal); color: var(--paper); }
+.kh__chip:disabled { opacity: 0.45; cursor: default; }
+.kh__chip--again { border-color: var(--line); color: var(--ink); }
+
+/* phones: the panel becomes a sheet across the foot of the screen */
+@media (max-width: 560px) {
+  .kh { --kh-edge: 12px; }
+  .kh__launch { width: 66px; height: 70px; }
+  .kh__launch .eyeball { width: 52px !important; height: 52px !important; }
+  .kh__hello { left: 64px; bottom: 28px; }
+  .kh__panel {
+    position: fixed; left: 10px; right: 10px; bottom: 88px;
+    width: auto;
+    max-height: calc(100svh - 170px);
+    transform-origin: 30px 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kh__launch .eyeball, .kh__launch::after, .kh__dots i { animation: none; }
+  .kh__panel, .kh[data-open] .kh__panel { transition: none; }
+  .kh__msg, .kh__hello { animation: none; }
+}
