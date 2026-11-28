@@ -19,18 +19,6 @@
 .give__stage { padding-top: 46%; }
 .give__box { position: relative; width: min(100%, 520px); margin-inline: auto; }
 
-/* grounds the box on the page: a wide soft shadow and a tighter contact one */
-.give__shadow {
-  position: absolute; left: 12%; right: 12%; top: 93%; height: 16%;
-  background: radial-gradient(closest-side, rgba(30, 26, 23, 0.16), rgba(30, 26, 23, 0));
-  filter: blur(4px);
-  pointer-events: none;
-}
-.give__shadow::after {
-  content: ''; position: absolute; left: 14%; right: 14%; top: 22%; height: 46%;
-  background: radial-gradient(closest-side, rgba(30, 26, 23, 0.28), rgba(30, 26, 23, 0));
-}
-
 @media (max-width: 900px) {
   .give { grid-template-columns: 1fr; gap: 0; }
   .give p { font-size: 17px; }

@@ -19,7 +19,6 @@ export default function Give() {
 
       <div className="give__stage" ref={stage}>
         <div className="give__box">
-          <span className="give__shadow" aria-hidden="true" />
           <Bucket active={seen} />
         </div>
       </div>
