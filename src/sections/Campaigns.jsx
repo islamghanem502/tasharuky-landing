@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import Highlight from '@/components/Highlight'
 import { Progress } from '@/components/ui/progress'
@@ -10,97 +11,141 @@ const CAMPAIGNS = [
   { img: 'water', sector: 'الطوارئ والأزمات', name: 'سقيا وحياة', desc: 'تأمين مياه الشرب للأسر النازحة في غزة', goal: 55000, raised: 50722, backers: 1252 },
   { img: 'safety', sector: 'الأمن الغذائي', name: 'عطاء وأمان', desc: 'لنواصل الدعم للأسر النازحة في غزة', goal: 150000, raised: 113490, backers: 2010 },
   { img: 'winter', sector: 'الطوارئ والأزمات', name: 'معًا لشتاء أكثر دفئًا', desc: 'إغاثة الأطفال والأسر النازحة في غزة', goal: 30000, raised: 21855, backers: 607 },
-  { img: 'orphans', sector: 'الحماية (المرأة والطفل)', name: 'إكفلني', desc: 'دعم وكفالة 500 يتيم في غزة', goal: 30000, raised: 10787, backers: 98 },
+  { img: 'orphans', sector: 'الحماية', name: 'إكفلني', desc: 'دعم وكفالة 500 يتيم في غزة', goal: 30000, raised: 10787, backers: 98 },
 ]
 
 const money = (n) => `$${n.toLocaleString('en-US')}`
+const spring = { type: 'spring', stiffness: 170, damping: 22, mass: 0.9 }
 
-function Row({ c, i }) {
-  const el = useRef(null)
-  const [seen, setSeen] = useState(false)
+// where each paper sits, closed (tucked in) and open (fanned out of the folder)
+const PAPERS = {
+  photo: { closed: { x: '-14%', y: '30%', rotate: -4 }, open: { x: '-20%', y: '-36%', rotate: -7 } },
+  slip: { closed: { x: '0%', y: '34%', rotate: 1 }, open: { x: '18%', y: '-24%', rotate: 5 } },
+  note: { closed: { x: '15%', y: '32%', rotate: 4 }, open: { x: '30%', y: '-8%', rotate: 11 } },
+}
+
+function Folder({ c, i, open, onOpen, onClose }) {
   const pct = Math.round((c.raised / c.goal) * 1000) / 10
-
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setSeen(true)
-          io.disconnect()
-        }
-      },
-      { threshold: 0.6 },
-    )
-    io.observe(el.current)
-    return () => io.disconnect()
-  }, [])
+  const left = c.goal - c.raised
+  const state = open ? 'open' : 'closed'
 
   return (
-    <li className="cp__row" ref={el} data-seen={seen || undefined} style={{ '--i': i }}>
-      <a className="cp__link" href={`${SITE}/ar/projects`} aria-label={`ادعم حملة ${c.name}`} />
-      <img className="cp__photo" src={`/campaigns/${c.img}.webp`} alt="" width="96" height="96" loading="lazy" />
+    <article
+      className="fd"
+      data-open={open || undefined}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && onOpen()}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && onClose()}
+      onFocus={onOpen}
+      onClick={(e) => {
+        if (e.target.closest('a')) return
+        if (open) onClose()
+        else onOpen()
+      }}
+    >
+      <div className="fd__tab" aria-hidden="true">
+        <span className="fd__mono">{String(i + 1).padStart(2, '0')}</span>
+      </div>
+      <div className="fd__back" aria-hidden="true" />
 
-      <div className="cp__what">
-        <span className="cp__sector">{c.sector}</span>
+      <div className="fd__papers" aria-hidden="true">
+        <motion.div className="fd__paper fd__paper--photo" initial={false} animate={PAPERS.photo[state]} transition={{ ...spring, delay: open ? 0.04 : 0 }}>
+          <img src={`/campaigns/${c.img}.webp`} alt="" loading="lazy" />
+          <span>من الميدان</span>
+        </motion.div>
+        <motion.div className="fd__paper fd__paper--slip" initial={false} animate={PAPERS.slip[state]} transition={spring}>
+          <b>كشف الحملة</b>
+          <div className="fd__line">
+            <span>تم جمعه</span>
+            <i />
+            <span className="fd__mono">{money(c.raised)}</span>
+          </div>
+          <div className="fd__line">
+            <span>الهدف</span>
+            <i />
+            <span className="fd__mono">{money(c.goal)}</span>
+          </div>
+          <div className="fd__line">
+            <span>الداعمون</span>
+            <i />
+            <span className="fd__mono">{c.backers.toLocaleString('en-US')}</span>
+          </div>
+        </motion.div>
+        <motion.div className="fd__paper fd__paper--note" initial={false} animate={PAPERS.note[state]} transition={{ ...spring, delay: open ? 0.08 : 0 }}>
+          <b>تقرير ميداني</b>
+          <i />
+          <i />
+          <i />
+          <span className="fd__stamp">موثّق</span>
+        </motion.div>
+      </div>
+
+      <motion.div
+        className="fd__front"
+        initial={false}
+        animate={{ rotateX: open ? -26 : 0 }}
+        transition={{ type: 'spring', stiffness: 160, damping: 20 }}
+      >
+        <span className="fd__sector">{c.sector}</span>
         <h3>{c.name}</h3>
         <p>{c.desc}</p>
-      </div>
-
-      <dl className="cp__nums">
-        <div>
-          <dt>تم جمعه</dt>
-          <dd className="cp__mono" dir="ltr">
-            {money(c.raised)}
-          </dd>
+        <div className="fd__bar">
+          <Progress value={pct} className="fd__progress" indicatorClassName="fd__indicator" aria-label={`نسبة ما تم جمعه ${pct}%`} />
+          <span className="fd__mono" dir="ltr">
+            {pct}%
+          </span>
         </div>
-        <div>
-          <dt>الهدف</dt>
-          <dd className="cp__mono" dir="ltr">
-            {money(c.goal)}
-          </dd>
-        </div>
-        <div>
-          <dt>داعم</dt>
-          <dd className="cp__mono" dir="ltr">
-            {c.backers.toLocaleString('en-US')}
-          </dd>
-        </div>
-      </dl>
-
-      <div className="cp__bar">
-        <Progress value={seen ? pct : 0} className="cp__progress" indicatorClassName="cp__indicator" aria-label={`نسبة ما تم جمعه ${pct}%`} />
-        <span className="cp__mono" dir="ltr">
-          {pct}%
-        </span>
-      </div>
-
-      <span className="cp__cta" aria-hidden="true">
-        ادعم الآن
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M13 8H3M7 4 3 8l4 4" />
-        </svg>
-      </span>
-    </li>
+        <p className="fd__left">
+          باقي{' '}
+          <b className="fd__mono" dir="ltr">
+            {money(left)}
+          </b>{' '}
+          للوصول إلى الهدف
+        </p>
+        <a className="fd__cta" href={`${SITE}/ar/projects`}>
+          ادعم الآن
+        </a>
+      </motion.div>
+    </article>
   )
 }
 
 export default function Campaigns() {
+  // the campaign closest to its goal opens first, to show the files can be opened
+  const first = CAMPAIGNS.reduce((best, c, i) => (c.raised / c.goal > CAMPAIGNS[best].raised / CAMPAIGNS[best].goal ? i : best), 0)
+  const [open, setOpen] = useState(null)
+  const grid = useRef(null)
+
+  useEffect(() => {
+    const items = [...grid.current.children]
+    const touch = window.matchMedia('(hover: none)').matches
+    // on touch screens, the folder in the middle of the screen opens by itself
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setOpen(touch ? items.indexOf(e.target) : (o) => (o === null ? first : o))
+      },
+      touch ? { rootMargin: '-45% 0px -45% 0px' } : { threshold: 0.6 },
+    )
+    items.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [first])
+
   return (
     <section className="cp" id="projects">
       <header className="cp__head">
         <h2>
-          مشاريع <Highlight>موثوقة</Highlight> تنتظر دعمك
+          ملفات مفتوحة <Highlight tone="dark">تنتظر من يُكملها</Highlight>
         </h2>
-        <p>استكشف حملات إنسانية وتنموية موثقة، وتابع ما تم جمعه والأثر المتوقع قبل التبرع.</p>
+        <p>كل حملة ملف موثّق: صور من الميدان، وما تم جمعه، وما تبقّى للوصول إلى الهدف. افتح الملف، وكن من يُكمله.</p>
       </header>
 
-      <ul className="cp__list">
+      <div className="cp__grid" ref={grid}>
         {CAMPAIGNS.map((c, i) => (
-          <Row key={c.name} c={c} i={i} />
+          <Folder key={c.name} c={c} i={i} open={open === i} onOpen={() => setOpen(i)} onClose={() => setOpen((o) => (o === i ? null : o))} />
         ))}
-      </ul>
+      </div>
 
-      <a className="link cp__all" href={`${SITE}/ar/projects`}>
-        كل المشاريع
+      <a className="cp__all" href={`${SITE}/ar/projects`}>
+        كل الحملات
       </a>
     </section>
   )

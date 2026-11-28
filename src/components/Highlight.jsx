@@ -6,7 +6,7 @@ import './Highlight.css'
  * A dry-brush shape (ragged ends, uneven edges, a few bristle streaks), stretched to the
  * words, and painted in from the right (the Arabic reading start) as it comes into view.
  */
-export default function Highlight({ children, delay = 0 }) {
+export default function Highlight({ children, delay = 0, tone }) {
   const el = useRef(null)
   const [on, setOn] = useState(false)
 
@@ -25,7 +25,7 @@ export default function Highlight({ children, delay = 0 }) {
   }, [])
 
   return (
-    <span className="hl" ref={el} data-on={on || undefined} style={{ '--hl-delay': `${delay}ms` }}>
+    <span className={tone === 'dark' ? 'hl hl--dark' : 'hl'} ref={el} data-on={on || undefined} style={{ '--hl-delay': `${delay}ms` }}>
       <svg className="hl__stroke" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <filter id="hl-rough" x="-5%" y="-20%" width="110%" height="140%">
